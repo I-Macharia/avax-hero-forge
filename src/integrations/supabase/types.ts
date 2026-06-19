@@ -14,16 +14,263 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attendance: {
+        Row: {
+          id: string
+          marked_at: string
+          marked_by: string | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          marked_at?: string
+          marked_by?: string | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          marked_at?: string
+          marked_by?: string | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nft_mints: {
+        Row: {
+          chain_id: number
+          contract_address: string
+          id: string
+          metadata_uri: string | null
+          minted_at: string
+          quest_id: string | null
+          token_id: number | null
+          tx_hash: string
+          user_id: string
+        }
+        Insert: {
+          chain_id?: number
+          contract_address: string
+          id?: string
+          metadata_uri?: string | null
+          minted_at?: string
+          quest_id?: string | null
+          token_id?: number | null
+          tx_hash: string
+          user_id: string
+        }
+        Update: {
+          chain_id?: number
+          contract_address?: string
+          id?: string
+          metadata_uri?: string | null
+          minted_at?: string
+          quest_id?: string | null
+          token_id?: number | null
+          tx_hash?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nft_mints_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          wallet_address: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Relationships: []
+      }
+      quest_completions: {
+        Row: {
+          completed_at: string
+          completed_by: string | null
+          id: string
+          quest_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          completed_by?: string | null
+          id?: string
+          quest_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          completed_by?: string | null
+          id?: string
+          quest_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_completions_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quests: {
+        Row: {
+          active: boolean
+          badge_token_id: number | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          metadata_uri: string | null
+          points: number
+          slug: string
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          badge_token_id?: number | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          metadata_uri?: string | null
+          points?: number
+          slug: string
+          title: string
+        }
+        Update: {
+          active?: boolean
+          badge_token_id?: number | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          metadata_uri?: string | null
+          points?: number
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      sessions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          points: number
+          starts_at: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          points?: number
+          starts_at: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          points?: number
+          starts_at?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      leaderboard_view: {
+        Row: {
+          attendance_points: number | null
+          avatar_url: string | null
+          display_name: string | null
+          nft_count: number | null
+          quest_count: number | null
+          quest_points: number | null
+          session_count: number | null
+          total_points: number | null
+          user_id: string | null
+          wallet_address: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "organizer" | "participant"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +397,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "organizer", "participant"],
+    },
   },
 } as const
