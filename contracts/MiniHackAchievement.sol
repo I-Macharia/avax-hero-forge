@@ -102,27 +102,12 @@ contract MiniHackAchievement is ERC721, ERC721URIStorage, AccessControl {
         return _badgeIdToTokenId[badgeId];
     }
 
-    /**
-     * @dev Overrides ERC721's _update to block all transfers, making tokens soulbound.
-     */
-    function _update(
-        address to,
-        uint256 tokenId,
-        address auth
-    ) internal virtual override {
-        require(to == ownerOf(tokenId), "Soulbound: transfer not allowed");
-        super._update(to, tokenId, auth);
-    }
-    function getTokenId(uint256 badgeId) external view returns (uint256) {
-        return _badgeIdToTokenId[badgeId];
-    }
-
     /// @dev Soulbound: block all transfers except mint (from = 0) and burn (to = 0).
     function _update(
         address to,
         uint256 tokenId,
         address auth
-    ) internal override returns (address) {
+    ) internal override(ERC721) returns (address) {
         address from = _ownerOf(tokenId);
         if (from != address(0) && to != address(0)) {
             revert("Soulbound: non-transferable");

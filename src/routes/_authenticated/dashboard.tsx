@@ -1,3 +1,4 @@
+import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -6,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
 import { BadgeCard } from "@/components/BadgeCard";
 import { txUrl } from "@/lib/contract/config";
+import NFTGallery from "@/components/NFTGallery";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard · MiniHack Heroes" }] }),
@@ -86,7 +88,7 @@ function Dashboard() {
         />
       </div>
 
-      <section>
+  <section>
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
           Your NFT badges
@@ -118,6 +120,14 @@ function Dashboard() {
             ))}
           </div>
         )}
+        {/* Thirdweb-powered gallery (additional on-chain view) */}
+        <div className="mt-6">
+          <h3 className="text-sm font-medium mb-3">On-chain view</h3>
+          {/* import dynamically to avoid SSR issues */}
+          <React.Suspense fallback={<div className="text-muted-foreground">Loading gallery…</div>}>
+            <NFTGallery />
+          </React.Suspense>
+        </div>
       </section>
     </div>
   );

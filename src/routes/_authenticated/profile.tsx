@@ -1,3 +1,4 @@
+import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import { useSession } from "@/hooks/useSession";
 import { useRoles } from "@/hooks/useRoles";
 import { getWalletClient, getInjectedProvider } from "@/lib/contract/client";
 import { shortAddress, txUrl, CONTRACT_ADDRESS } from "@/lib/contract/config";
+import NFTGallery from "@/components/NFTGallery";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "Profile · MiniHack Heroes" }] }),
@@ -181,6 +183,14 @@ function ProfilePage() {
             ))}
           </div>
         )}
+        {/* Localized on-chain gallery: prefer wallet address if linked, otherwise show global contract */}
+        <div className="mt-4">
+          <h3 className="text-sm font-medium mb-2">On-chain assets</h3>
+          <React.Suspense fallback={<div className="text-muted-foreground">Loading on-chain assets…</div>}>
+            {/* Show on-chain assets owned by the user if wallet linked, otherwise show global contract assets */}
+            <NFTGallery contractAddress={CONTRACT_ADDRESS} owner={profile.wallet_address ?? undefined} />
+          </React.Suspense>
+        </div>
         {CONTRACT_ADDRESS === "0x0000000000000000000000000000000000000000" && (
           <p className="mt-3 text-xs text-muted-foreground">
             Contract not deployed yet. See <code>contracts/README.md</code>.
