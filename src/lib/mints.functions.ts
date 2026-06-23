@@ -105,7 +105,7 @@ export const recordVerifiedMint = createServerFn({ method: "POST" })
       _contract_address: contract,
       _chain_id: chainId,
       _token_id: tokenId,
-      _metadata_uri: quest.metadata_uri ?? null,
+      _metadata_uri: quest.metadata_uri ?? "",
     });
     if (error) throw new Error("Failed to record mint");
     return { ok: true as const, mint: inserted, tokenId };
