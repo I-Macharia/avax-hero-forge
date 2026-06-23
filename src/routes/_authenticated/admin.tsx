@@ -1,23 +1,15 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Shield, UserCheck, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
+import { listAdminUsers } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin · MiniHack Heroes" }] }),
-  beforeLoad: async () => {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) throw redirect({ to: "/auth" });
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", u.user.id);
-    const ok = (roles ?? []).some((r) => r.role === "admin" || r.role === "organizer");
-    if (!ok) throw redirect({ to: "/dashboard" });
-  },
   component: AdminPage,
 });
 
@@ -26,6 +18,7 @@ function AdminPage() {
   const qc = useQueryClient();
   const [selectedSession, setSelectedSession] = useState<string>("");
   const [selectedQuest, setSelectedQuest] = useState<string>("");
+  const fetchAdminUsers = useServerFn(listAdminUsers);
 
   const { data: sessions } = useQuery({
     queryKey: ["admin-sessions"],
@@ -35,10 +28,10 @@ function AdminPage() {
     queryKey: ["admin-quests"],
     queryFn: async () => (await supabase.from("quests").select("*").order("points")).data ?? [],
   });
-  const { data: users } = useQuery({
+  const { data: users, error: usersError } = useQuery({
     queryKey: ["admin-users"],
-    queryFn: async () =>
-      (await supabase.from("profiles").select("*").order("created_at", { ascending: false })).data ?? [],
+    queryFn: () => fetchAdminUsers(),
+    retry: false,
   });
 
   const markAttendance = useMutation({
@@ -113,6 +106,11 @@ function AdminPage() {
         </div>
       </div>
 
+      {usersError ? (
+        <div className="rounded-2xl border border-destructive/40 bg-destructive/10 p-5 text-sm text-destructive">
+          You don't have permission to view participants. Ask an admin for access.
+        </div>
+      ) : (
       <div className="rounded-2xl border border-border bg-card/70 overflow-hidden">
         <div className="px-5 py-3 border-b border-border flex items-center gap-2">
           <UserCheck className="h-4 w-4" />
@@ -148,6 +146,7 @@ function AdminPage() {
           ))}
         </div>
       </div>
+      )}
 
       <p className="text-xs text-muted-foreground">
         Tip: batch on-chain minting can be triggered from your own admin wallet by listing eligible

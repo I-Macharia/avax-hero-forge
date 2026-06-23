@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +9,7 @@ import { BadgeCard } from "@/components/BadgeCard";
 import { getWalletClient, publicClient } from "@/lib/contract/client";
 import { miniHackAbi } from "@/lib/contract/abi";
 import { CONTRACT_ADDRESS, txUrl } from "@/lib/contract/config";
+import { recordVerifiedMint } from "@/lib/mints.functions";
 
 export const Route = createFileRoute("/_authenticated/quests")({
   head: () => ({ meta: [{ title: "Quests · MiniHack Heroes" }] }),
@@ -17,6 +19,7 @@ export const Route = createFileRoute("/_authenticated/quests")({
 function QuestsPage() {
   const { user } = useSession();
   const qc = useQueryClient();
+  const submitVerifiedMint = useServerFn(recordVerifiedMint);
 
   const { data, isLoading } = useQuery({
     queryKey: ["quests", user?.id],
@@ -58,17 +61,10 @@ function QuestsPage() {
       const hash = await client.writeContract(request);
       toast.message("Tx submitted", { description: hash, action: { label: "View", onClick: () => window.open(txUrl(hash)) } });
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
-      await supabase.from("nft_mints").insert({
-        user_id: user.id,
-        quest_id: quest.id,
-        tx_hash: hash,
-        contract_address: CONTRACT_ADDRESS,
-        chain_id: 43113,
-        token_id: Number(badgeId),
-        metadata_uri: uri,
-      });
-      return { hash, receipt };
+      await publicClient.waitForTransactionReceipt({ hash });
+      // Server verifies the on-chain tx and records the mint via service role.
+      await submitVerifiedMint({ data: { questId: quest.id, txHash: hash } });
+      return { hash };
     },
     onSuccess: ({ hash }) => {
       confetti({ particleCount: 160, spread: 80, origin: { y: 0.6 } });
