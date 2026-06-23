@@ -19,6 +19,7 @@ export const Route = createFileRoute("/_authenticated/quests")({
 function QuestsPage() {
   const { user } = useSession();
   const qc = useQueryClient();
+  const submitVerifiedMint = useServerFn(recordVerifiedMint);
 
   const { data, isLoading } = useQuery({
     queryKey: ["quests", user?.id],
