@@ -61,17 +61,10 @@ function QuestsPage() {
       const hash = await client.writeContract(request);
       toast.message("Tx submitted", { description: hash, action: { label: "View", onClick: () => window.open(txUrl(hash)) } });
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
-      await supabase.from("nft_mints").insert({
-        user_id: user.id,
-        quest_id: quest.id,
-        tx_hash: hash,
-        contract_address: CONTRACT_ADDRESS,
-        chain_id: 43113,
-        token_id: Number(badgeId),
-        metadata_uri: uri,
-      });
-      return { hash, receipt };
+      await publicClient.waitForTransactionReceipt({ hash });
+      // Server verifies the on-chain tx and records the mint via service role.
+      await submitVerifiedMint({ data: { questId: quest.id, txHash: hash } });
+      return { hash };
     },
     onSuccess: ({ hash }) => {
       confetti({ particleCount: 160, spread: 80, origin: { y: 0.6 } });
