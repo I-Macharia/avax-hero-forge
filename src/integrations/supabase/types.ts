@@ -261,12 +261,41 @@ export type Database = {
       }
     }
     Functions: {
+      get_public_stats: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      record_verified_mint: {
+        Args: {
+          _chain_id: number
+          _contract_address: string
+          _metadata_uri: string
+          _quest_id: string
+          _token_id: number
+          _tx_hash: string
+          _user_id: string
+        }
+        Returns: {
+          chain_id: number
+          contract_address: string
+          id: string
+          metadata_uri: string | null
+          minted_at: string
+          quest_id: string | null
+          token_id: number | null
+          tx_hash: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "nft_mints"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {
