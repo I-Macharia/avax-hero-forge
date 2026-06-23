@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mini Hack 2026 | Mission Briefing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --rune-glow: rgba(255, 83, 83, 0.4);
+            --mana-glow: rgba(195, 109, 255, 0.4);
+        }
+        
+        body {
+            background-color: #15121d;
+            color: #e7dff0;
+            overflow-x: hidden;
+        }
+
+        .rune-glass {
+            background: rgba(26, 22, 36, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(54, 48, 64, 0.5);
+        }
+
+        .glow-ring-primary:hover {
+            box-shadow: 0 0 20px var(--rune-glow);
+            border-color: #ffb3ae;
+        }
+
+        .rift-gradient {
+            background: linear-gradient(135deg, #ff5353 0%, #c0001f 100%);
+        }
+
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .timeline-line {
+            background: linear-gradient(to bottom, #ff5353 0%, #7300c1 50%, #363040 100%);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .animate-pulse-soft {
+            animation: pulse-soft 3s infinite ease-in-out;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#00210d",
+                        "error-container": "#93000a",
+                        "secondary-container": "#7300c1",
+                        "on-tertiary": "#00391a",
+                        "surface-container-lowest": "#0f0c18",
+                        "on-background": "#e7dff0",
+                        "on-primary-fixed": "#410005",
+                        "mana-glow": "#C36DFF",
+                        "secondary-fixed-dim": "#deb7ff",
+                        "on-tertiary-container": "#003116",
+                        "on-secondary-fixed-variant": "#6a00b2",
+                        "surface": "#15121d",
+                        "surface-dim": "#15121d",
+                        "on-error": "#690005",
+                        "background": "#15121d",
+                        "inverse-surface": "#e7dff0",
+                        "surface-container-highest": "#37333f",
+                        "primary": "#ffb3ae",
+                        "on-secondary-container": "#d9aeff",
+                        "error": "#ffb4ab",
+                        "secondary-fixed": "#f1dbff",
+                        "inverse-on-surface": "#322e3b",
+                        "muted-text": "#AEA0B1",
+                        "tertiary-container": "#00a658",
+                        "surface-variant": "#37333f",
+                        "on-secondary": "#4a007f",
+                        "card-surface": "#1A1624",
+                        "inverse-primary": "#c0001f",
+                        "on-secondary-fixed": "#2d0050",
+                        "on-primary-fixed-variant": "#930015",
+                        "on-primary-container": "#5c0009",
+                        "tertiary-fixed-dim": "#57df88",
+                        "tertiary": "#57df88",
+                        "primary-fixed-dim": "#ffb3ae",
+                        "on-surface-variant": "#e8bcb9",
+                        "outline": "#ae8785",
+                        "on-tertiary-fixed-variant": "#005228",
+                        "surface-bright": "#3b3744",
+                        "tertiary-fixed": "#76fca1",
+                        "on-surface": "#e7dff0",
+                        "on-error-container": "#ffdad6",
+                        "popover-surface": "#15111F",
+                        "on-primary": "#68000c",
+                        "secondary": "#deb7ff",
+                        "outline-variant": "#5e3f3d",
+                        "avalanche-glow": "#FF5A47",
+                        "input-base": "#292433",
+                        "primary-fixed": "#ffdad7",
+                        "surface-container-low": "#1d1a25",
+                        "border-rune": "#363040",
+                        "surface-container-high": "#2c2834",
+                        "surface-container": "#211e2a",
+                        "surface-tint": "#ffb3ae",
+                        "primary-container": "#ff5353"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "16px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "margin-desktop": "32px",
+                        "xxl": "64px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-base": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-bold": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "stat-value": ["Space Grotesk"],
+                        "label-caps": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "display-hero": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-bold": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "stat-value": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "headline-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-base overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/70 backdrop-blur-xl border-b border-border-rune shadow-[0_0_15px_rgba(255,83,83,0.1)]">
+<nav class="flex justify-between items-center w-full px-margin-desktop max-w-7xl mx-auto h-20">
+<div class="flex items-center gap-xl">
+<span class="font-headline-md text-headline-md tracking-tighter text-primary">MINI HACK 2026</span>
+<div class="hidden md:flex gap-lg">
+<a class="text-primary font-body-bold border-b-2 border-primary pb-1" href="#">Quests</a>
+<a class="text-muted-text hover:text-on-surface transition-colors" href="#">Inventory</a>
+<a class="text-muted-text hover:text-on-surface transition-colors" href="#">Leaderboard</a>
+<a class="text-muted-text hover:text-on-surface transition-colors" href="#">Profile</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary p-sm hover:bg-white/5 rounded-full transition-all">notifications</button>
+<button class="material-symbols-outlined text-primary p-sm hover:bg-white/5 rounded-full transition-all">settings</button>
+<div class="md:hidden">
+<button class="material-symbols-outlined text-primary">menu</button>
+</div>
+</div>
+</nav>
+</header>
+<main class="pt-32 pb-xxl relative">
+<!-- Atmospheric Background Element -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] pointer-events-none opacity-20 overflow-hidden">
+
+</div>
+<div class="max-w-7xl mx-auto px-margin-desktop relative z-10">
+<!-- Header Section -->
+<div class="mb-xxl text-center">
+<span class="font-label-caps text-label-caps text-primary tracking-[0.2em] mb-sm block">AVAX RIFT OPERATIVE</span>
+<h1 class="font-display-hero text-display-hero text-on-surface mb-md">MISSION BRIEFING</h1>
+<p class="font-body-lg text-body-lg text-muted-text max-w-2xl mx-auto">
+                    Map your ascent through the 20 legendary trials of the Mini Hack. Each artifact secured brings you closer to the Rift Master status.
+                </p>
+</div>
+<!-- Dashboard Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xxl">
+<div class="rune-glass p-lg rounded-xl flex flex-col items-center justify-center border-l-4 border-l-primary">
+<span class="font-label-caps text-label-caps text-muted-text mb-xs uppercase">Runes Secured</span>
+<span class="font-stat-value text-stat-value text-primary">04 / 20</span>
+</div>
+<div class="rune-glass p-lg rounded-xl flex flex-col items-center justify-center border-l-4 border-l-secondary">
+<span class="font-label-caps text-label-caps text-muted-text mb-xs uppercase">Current Sector</span>
+<span class="font-stat-value text-stat-value text-secondary">PAYMENTS</span>
+</div>
+<div class="rune-glass p-lg rounded-xl flex flex-col items-center justify-center border-l-4 border-l-tertiary">
+<span class="font-label-caps text-label-caps text-muted-text mb-xs uppercase">Power Level</span>
+<span class="font-stat-value text-stat-value text-tertiary">LVL 42</span>
+</div>
+</div>
+<!-- Mission Roadmap -->
+<div class="relative">
+<!-- Vertical Timeline Line (Desktop Only) -->
+<div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px timeline-line -translate-x-1/2 opacity-30"></div>
+<!-- Category: PAYMENTS -->
+<div class="mb-xxl relative">
+<div class="flex items-center justify-center mb-xl">
+<div class="bg-surface-container-high px-xl py-xs rounded-full border border-border-rune backdrop-blur shadow-[0_0_20px_rgba(255,83,83,0.1)]">
+<span class="font-label-caps text-label-caps text-primary tracking-widest">SECTOR I: PRIMORDIAL PAYMENTS</span>
+</div>
+</div>
+<div class="space-y-xl">
+<!-- Quest Entry 1 (Left Aligned Desktop) -->
+<div class="flex flex-col md:flex-row items-center gap-lg">
+<div class="w-full md:w-1/2 md:pr-xl flex justify-end">
+<div class="rune-glass p-lg rounded-xl w-full max-w-lg hover:scale-[1.02] transition-transform duration-300 border-primary/20 glow-ring-primary group cursor-pointer">
+<div class="flex items-start gap-md">
+<div class="relative shrink-0">
+<img alt="Week 1 Session 1 NFT Artifact" class="w-24 h-24 rounded-lg object-cover border border-primary/30 shadow-lg shadow-primary/10" src="https://lh3.googleusercontent.com/aida/AP1WRLsrVuekiuInDug0KvON9VNMs125Chy3jUBnGm-XfFKnvuSQfy7LvDvPIobwIrA2KPUfwtOd5GLJoKwP_D84dPsl3WypZDHWrxLBu9CuF6Ih1XCitrTMUBsZdgf1NUCLudV44BxgTwwaEw7RKsAR65paM-j6SGpiZaLj5UKECNssZHVyxrgBD-vHGLiE1cYxGyo6U3N3TRQq3UhV9dKKO3G7ubNwCPbcJjyUmInpm6GImIkNzeKmzbrpoolY"/>
+<div class="absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] font-bold px-2 py-0.5 rounded-full">SECURED</div>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-xs">W1S1: The Genesis Rune</h3>
+<p class="font-body-base text-body-base text-muted-text mb-md line-clamp-2">Deploy your first smart contract onto the Avax C-Chain. The foundation of your digital destiny begins here.</p>
+<div class="flex items-center justify-between">
+<span class="text-tertiary font-label-caps text-label-caps flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> COMPLETED
+                                                </span>
+<button class="font-label-caps text-label-caps text-on-primary bg-primary-container px-md py-sm rounded-lg active:scale-95 transition-all">VIEW NFT</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden md:flex shrink-0 w-8 h-8 rounded-full bg-primary-container z-20 border-4 border-surface shadow-[0_0_10px_#ff5353] items-center justify-center">
+<span class="text-[10px] font-bold text-on-primary">01</span>
+</div>
+<div class="w-full md:w-1/2"></div>
+</div>
+<!-- Quest Entry 2 (Right Aligned Desktop) -->
+<div class="flex flex-col md:flex-row-reverse items-center gap-lg">
+<div class="w-full md:w-1/2 md:pl-xl flex justify-start">
+<div class="rune-glass p-lg rounded-xl w-full max-w-lg border-secondary/20 glow-ring-primary group cursor-pointer bg-white/5">
+<div class="flex items-start gap-md">
+<div class="relative shrink-0">
+<div class="w-24 h-24 rounded-lg bg-surface-container-highest flex items-center justify-center border border-border-rune animate-pulse-soft">
+<span class="material-symbols-outlined text-4xl text-muted-text">mystery</span>
+</div>
+<div class="absolute -top-2 -right-2 bg-secondary text-on-secondary text-[10px] font-bold px-2 py-0.5 rounded-full">IN PROGRESS</div>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-xs">W1S2: Subnet Synthesis</h3>
+<p class="font-body-base text-body-base text-muted-text mb-md line-clamp-2">Initialize your private validator set and spawn a custom sovereign subnet for high-frequency transactions.</p>
+<div class="flex items-center justify-between">
+<div class="flex-1 h-1.5 bg-surface-container rounded-full overflow-hidden mr-md">
+<div class="h-full rift-gradient w-[65%]"></div>
+</div>
+<button class="font-label-caps text-label-caps text-on-primary bg-primary-container px-md py-sm rounded-lg active:scale-95 transition-all shadow-[0_0_15px_rgba(255,83,83,0.3)]">LAUNCH MISSION</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden md:flex shrink-0 w-8 h-8 rounded-full bg-secondary-container z-20 border-4 border-surface shadow-[0_0_10px_#7300c1] items-center justify-center">
+<span class="text-[10px] font-bold text-on-secondary">02</span>
+</div>
+<div class="w-full md:w-1/2"></div>
+</div>
+<!-- Quest Entry 3 (Locked) -->
+<div class="flex flex-col md:flex-row items-center gap-lg opacity-50 grayscale hover:grayscale-0 hover:opacity-80 transition-all duration-500">
+<div class="w-full md:w-1/2 md:pr-xl flex justify-end">
+<div class="rune-glass p-lg rounded-xl w-full max-w-lg border-border-rune">
+<div class="flex items-start gap-md">
+<div class="shrink-0">
+<div class="w-24 h-24 rounded-lg bg-surface-container-lowest flex items-center justify-center border border-border-rune">
+<span class="material-symbols-outlined text-4xl text-muted-text">lock</span>
+</div>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-muted-text mb-xs">W1S3: Cryptic Gas Relays</h3>
+<p class="font-body-base text-body-base text-muted-text/50 mb-md line-clamp-2">Optimize gas distribution across cross-chain messaging channels to minimize friction for the rift-dwellers.</p>
+<div class="flex items-center justify-between">
+<span class="text-muted-text font-label-caps text-label-caps">LOCKED UNTIL 10.12</span>
+<button class="font-label-caps text-label-caps text-muted-text bg-surface-container-high px-md py-sm rounded-lg cursor-not-allowed" disabled="">ACCESS DENIED</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden md:flex shrink-0 w-8 h-8 rounded-full bg-surface-container-highest z-20 border-4 border-surface items-center justify-center">
+<span class="text-[10px] font-bold text-muted-text">03</span>
+</div>
+<div class="w-full md:w-1/2"></div>
+</div>
+</div>
+</div>
+<!-- Category: GAMING -->
+<div class="mb-xxl relative">
+<div class="flex items-center justify-center mb-xl">
+<div class="bg-surface-container-high px-xl py-xs rounded-full border border-border-rune backdrop-blur">
+<span class="font-label-caps text-label-caps text-mana-glow tracking-widest uppercase">Sector II: Astral Gaming Arc</span>
+</div>
+</div>
+<!-- Placeholder for Gaming Category content -->
+<div class="flex flex-col items-center justify-center p-xxl rune-glass rounded-2xl border-dashed border-2 border-border-rune">
+<span class="material-symbols-outlined text-xxl text-muted-text/30 mb-md">sports_esports</span>
+<p class="text-muted-text font-label-caps text-label-caps">Content Decrypting for Sector II...</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-rune">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-xl px-margin-desktop max-w-7xl mx-auto gap-md">
+<div class="flex flex-col items-center md:items-start gap-xs">
+<span class="font-label-caps text-label-caps text-muted-text">MINI HACK RIFT</span>
+<p class="font-label-sm text-label-sm text-muted-text opacity-70">© 2026 MINI HACK RIFT. ALL RUNES RESERVED.</p>
+</div>
+<div class="flex gap-lg">
+<a class="font-label-sm text-label-sm text-muted-text hover:text-avalanche-glow transition-colors" href="#">Program Site</a>
+<a class="font-label-sm text-label-sm text-muted-text hover:text-avalanche-glow transition-colors" href="#">Community</a>
+<a class="font-label-sm text-label-sm text-muted-text hover:text-avalanche-glow transition-colors" href="#">Whitepaper</a>
+</div>
+<div class="flex gap-md">
+<button class="material-symbols-outlined text-muted-text hover:text-primary transition-colors">hub</button>
+<button class="material-symbols-outlined text-muted-text hover:text-primary transition-colors">terminal</button>
+<button class="material-symbols-outlined text-muted-text hover:text-primary transition-colors">public</button>
+</div>
+</div>
+</footer>
+<!-- FAB for Contextual Action (Mission Map) -->
+<button class="fixed bottom-lg right-lg md:bottom-xl md:right-xl w-16 h-16 rounded-full rift-gradient text-white shadow-[0_0_30px_rgba(255,83,83,0.5)] flex items-center justify-center z-50 hover:scale-110 active:scale-95 transition-all group">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-12 transition-transform">map</span>
+<div class="absolute right-full mr-4 px-4 py-2 bg-surface-container-highest border border-border-rune rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">
+<span class="font-label-caps text-label-caps">Rift Navigator</span>
+</div>
+</button>
+<script>
+        // Micro-interactions for hovering over quest cards
+        document.querySelectorAll('.rune-glass').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Potential for adding dynamic cursor effects or sound cues
+            });
+        });
+
+        // Simple scroll reveal effect for timeline
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100');
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Pre-setup for animations if needed
+    </script>
+</body></html>

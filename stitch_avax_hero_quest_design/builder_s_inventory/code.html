@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Builder's Inventory | MINI HACK 2026</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#00210d",
+                        "error-container": "#93000a",
+                        "secondary-container": "#7300c1",
+                        "on-tertiary": "#00391a",
+                        "surface-container-lowest": "#0f0c18",
+                        "on-background": "#e7dff0",
+                        "on-primary-fixed": "#410005",
+                        "mana-glow": "#C36DFF",
+                        "secondary-fixed-dim": "#deb7ff",
+                        "on-tertiary-container": "#003116",
+                        "on-secondary-fixed-variant": "#6a00b2",
+                        "surface": "#15121d",
+                        "surface-dim": "#15121d",
+                        "on-error": "#690005",
+                        "background": "#15121d",
+                        "inverse-surface": "#e7dff0",
+                        "surface-container-highest": "#37333f",
+                        "primary": "#ffb3ae",
+                        "on-secondary-container": "#d9aeff",
+                        "error": "#ffb4ab",
+                        "secondary-fixed": "#f1dbff",
+                        "inverse-on-surface": "#322e3b",
+                        "muted-text": "#AEA0B1",
+                        "tertiary-container": "#00a658",
+                        "surface-variant": "#37333f",
+                        "on-secondary": "#4a007f",
+                        "card-surface": "#1A1624",
+                        "inverse-primary": "#c0001f",
+                        "on-secondary-fixed": "#2d0050",
+                        "on-primary-fixed-variant": "#930015",
+                        "on-primary-container": "#5c0009",
+                        "tertiary-fixed-dim": "#57df88",
+                        "tertiary": "#57df88",
+                        "primary-fixed-dim": "#ffb3ae",
+                        "on-surface-variant": "#e8bcb9",
+                        "outline": "#ae8785",
+                        "on-tertiary-fixed-variant": "#005228",
+                        "surface-bright": "#3b3744",
+                        "tertiary-fixed": "#76fca1",
+                        "on-surface": "#e7dff0",
+                        "on-error-container": "#ffdad6",
+                        "popover-surface": "#15111F",
+                        "on-primary": "#68000c",
+                        "secondary": "#deb7ff",
+                        "outline-variant": "#5e3f3d",
+                        "avalanche-glow": "#FF5A47",
+                        "input-base": "#292433",
+                        "primary-fixed": "#ffdad7",
+                        "surface-container-low": "#1d1a25",
+                        "border-rune": "#363040",
+                        "surface-container-high": "#2c2834",
+                        "surface-container": "#211e2a",
+                        "surface-tint": "#ffb3ae",
+                        "primary-container": "#ff5353"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "16px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "margin-desktop": "32px",
+                        "xxl": "64px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-base": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-bold": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "stat-value": ["Space Grotesk"],
+                        "label-caps": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "display-hero": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-bold": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "stat-value": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "headline-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .rune-glass {
+            background: rgba(26, 22, 36, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(54, 48, 64, 0.5);
+        }
+        .glow-border-red:hover {
+            border-color: #ff5353;
+            box-shadow: 0 0 15px rgba(255, 83, 83, 0.3);
+        }
+        .rift-gradient-text {
+            background: linear-gradient(135deg, #ffb3ae 0%, #ff5353 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .crystalline-texture {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-base antialiased crystalline-texture min-h-screen selection:bg-primary/30">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/70 backdrop-blur-xl border-b border-border-rune shadow-[0_0_15px_rgba(255,83,83,0.1)] h-20">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-7xl mx-auto h-full">
+<div class="flex items-center gap-xl">
+<span class="font-headline-md text-headline-md tracking-tighter text-primary">MINI HACK 2026</span>
+<nav class="hidden md:flex gap-lg items-center">
+<a class="text-muted-text hover:text-on-surface transition-colors font-body-base text-body-base" href="#">Quests</a>
+<a class="text-primary font-body-bold border-b-2 border-primary pb-1 font-body-base text-body-base" href="#">Inventory</a>
+<a class="text-muted-text hover:text-on-surface transition-colors font-body-base text-body-base" href="#">Leaderboard</a>
+<a class="text-muted-text hover:text-on-surface transition-colors font-body-base text-body-base" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 hover:bg-white/5 transition-all duration-300 rounded-lg active:scale-95 text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 hover:bg-white/5 transition-all duration-300 rounded-lg active:scale-95 text-primary">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-32 pb-xxl px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto space-y-xxl">
+<!-- Hero Section: Builder Profile & Grand Throne -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-xl items-center">
+<div class="lg:col-span-7 space-y-lg">
+<div class="space-y-sm">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">Elite Architect Status</span>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg rift-gradient-text">Cypher_Wraith</h1>
+<p class="text-muted-text font-body-lg text-body-lg max-w-2xl">Master of the 2026 Mini Hack. Your forge has yielded 22 legendary artifacts. Current Global Rank: #1. Your influence reshapes the rift.</p>
+</div>
+<div class="flex flex-wrap gap-md">
+<div class="rune-glass p-md rounded-xl flex items-center gap-md min-w-[160px]">
+<div class="bg-primary-container/20 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary">military_tech</span>
+</div>
+<div>
+<p class="text-muted-text font-label-sm text-label-sm">Global Rank</p>
+<p class="font-stat-value text-stat-value text-on-surface">#01</p>
+</div>
+</div>
+<div class="rune-glass p-md rounded-xl flex items-center gap-md min-w-[160px]">
+<div class="bg-secondary-container/20 p-2 rounded-lg">
+<span class="material-symbols-outlined text-secondary">database</span>
+</div>
+<div>
+<p class="text-muted-text font-label-sm text-label-sm">Total Assets</p>
+<p class="font-stat-value text-stat-value text-on-surface">25</p>
+</div>
+</div>
+<div class="rune-glass p-md rounded-xl flex items-center gap-md min-w-[160px]">
+<div class="bg-tertiary-container/20 p-2 rounded-lg">
+<span class="material-symbols-outlined text-tertiary">bolt</span>
+</div>
+<div>
+<p class="text-muted-text font-label-sm text-label-sm">Power Score</p>
+<p class="font-stat-value text-stat-value text-on-surface">9,420</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-5 relative">
+<!-- Featured Asset: Grand Throne -->
+<div class="relative group">
+<div class="absolute -inset-4 bg-primary/20 blur-3xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
+<div class="rune-glass p-sm rounded-2xl relative overflow-hidden aspect-square flex items-center justify-center border-2 border-primary/50 glow-ring">
+<img alt="Grand Throne Masterpiece" class="w-full h-full object-cover rounded-xl shadow-2xl" src="https://lh3.googleusercontent.com/aida/AP1WRLsoXUH9c9riV7gXdjnBeJW05Q2FqHBEOzanoHqOupJsqfdJ2B43vJvlCC0SbOyQTtxV_ZRzEg5r2ZF8-ivnD9RPir2mak6XQINxrf5JPhlM1RgPk1a8e3j9mgWsSXiKahFCadSs1cEpoG7gJ1b8UlpEPLZ1ZpZNbtuNrnPFh5j5OcD9inrHavQz2FgLbQ2-xwSXKtLPabiEE2WwRpPZ_-uL5Fvl-o5xwYrgggnsVWustsrjDKvSVlx1ATti"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent flex flex-col justify-end p-lg">
+<span class="font-label-caps text-label-caps text-primary mb-1">Capstone Asset</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Master of the Forge</h2>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Leaderboard Medallions -->
+<section class="space-y-lg">
+<div class="flex items-end justify-between border-b border-border-rune pb-md">
+<h3 class="font-headline-md text-headline-md rift-gradient-text">Hall of Champions</h3>
+<span class="text-muted-text font-label-sm text-label-sm">Top 3 Seasonal Medallions</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- 1st Place -->
+<div class="rune-glass p-md rounded-xl flex items-center gap-lg border-primary/30 relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary shadow-[0_0_10px_#ff5353]"></div>
+<img alt="First Place Crown" class="w-20 h-20 rounded-lg object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtxWIOKN9pYQbSmHxy4uDNQqYJTvI2vz6ByREaetgWWLiN-Vk6UuKtHpF5Q_-_BPHGCdHMZSzynoyGUG5W_9w74Lnp-nnweYMShVH_DKr2ImYXQtEAMvWXlLlDgAwuHLebZZcTCcOAib1yQqJvHT4gwmsU3XofD3uGyKKnCL8hhlzv_ELkQtlBGL48eJEBIx1IVH5GRc1alN9TuCbjLXNa8WNH8ez6_j7xjrGX6YdSP3yxIcQZnNQgpZbQ"/>
+<div>
+<h4 class="font-body-bold text-body-bold text-on-surface">First Place Champion</h4>
+<p class="text-muted-text font-label-sm text-label-sm">Season 2026 Major Hack</p>
+</div>
+</div>
+<!-- 2nd Place -->
+<div class="rune-glass p-md rounded-xl flex items-center gap-lg border-white/10 group">
+<img alt="Second Place Gauntlet" class="w-20 h-20 rounded-lg object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLu_DODfAsJKdx3Akd2qBJIb9X8kBwwJ2ItxWpJfDU65Cs4ylerdYpJTACen8gFcmBTT2VU-hytmUDke2acXFj8wpB92GF7MlplxeN_-bg_4KF1xZ4mlVWPtt97sdgpm-ZYSmr3Wee3p2Z4WZmj-D3Zi9-STpVf6_nSXxwrr9lwUDE5Lw2dZFojYIvPjZTXqL0VWKLB5WBihLI9d1QlZ_dozcgHSCMet5taZ-UbowlGu2TC8F4yGbUmjmU3f"/>
+<div>
+<h4 class="font-body-bold text-body-bold text-on-surface">Second Place Runner-up</h4>
+<p class="text-muted-text font-label-sm text-label-sm">Mini Hack Global Sprint</p>
+</div>
+</div>
+<!-- 3rd Place -->
+<div class="rune-glass p-md rounded-xl flex items-center gap-lg border-white/10 group">
+<img alt="Third Place Crest" class="w-20 h-20 rounded-lg object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLt8aXu7JqFouWB2aUIJOhzXFDJRtjlvC0wb3MRWZQxfsJOQiUCwtHiQqotNsL0qRTDxPL9AXbrlD53iRV2-l3mBe3WmLSZ2IPhzCJWvHJ9nhERnSQj145ntl2wyjjvAeuKkWnLAGuaD55BYELq18lND06uyIsN9ZC2uz2pStHw09FseMZH1eyK5K0blXPIVoZA4OGHyDrvM_rUzm3AsRO8eVJu9Gpjro9mYf41YsVAUr1FuAtixujJ2qjki"/>
+<div>
+<h4 class="font-body-bold text-body-bold text-on-surface">Third Place Finisher</h4>
+<p class="text-muted-text font-label-sm text-label-sm">Core Wallet Onboarding</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Artifact Grid -->
+<section class="space-y-xl">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="space-y-1">
+<h3 class="font-headline-md text-headline-md text-on-surface">Collected Artifacts</h3>
+<p class="text-muted-text font-body-base text-body-base">Forged throughout the 12-week development cycle.</p>
+</div>
+<div class="flex gap-md">
+<button class="bg-surface-container-high px-md py-2 rounded-lg text-on-surface font-label-caps text-label-caps border border-border-rune hover:border-primary/50 transition-colors">Sort: Rarity</button>
+<button class="bg-surface-container-high px-md py-2 rounded-lg text-on-surface font-label-caps text-label-caps border border-border-rune hover:border-primary/50 transition-colors">Filter: Weekly</button>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-md">
+<!-- Grid Items loop -->
+<!-- Artifact Card 1 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Core Builder Shield" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLtQzGTURLt_fuDvkShHTvTF3dUkFPlSOYe54b3MFKrhx6J4qOlyNaEiuQgNo8zW5AzzWGoubFjeki1eQmord65KFSlRmOz78tn7kNczXKcLkzqscc0k0EC_4kYpxNHcii_8Q05o7GW7UzuGpiAPd5Myiip5_c352wKJUUCD1a8YowKbdDrDvZbbpXKmb8jhhieBaoCPXP92PiE3joA7Ft4LyBhFatsFdWnXy3PAh2dVBEYvgo_d1KSu2MgF"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 1</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Core Shield</h5>
+<p class="text-muted-text text-[12px]">Registry Token</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs active:scale-95 transition-all">View Lore</button>
+<button class="w-full py-2 border border-primary/40 text-primary font-label-caps text-label-caps rounded-lg text-xs active:scale-95 transition-all hover:bg-primary/10">List Market</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 2 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Smart Contract Scroll" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLsrVuekiuInDug0KvON9VNMs125Chy3jUBnGm-XfFKnvuSQfy7LvDvPIobwIrA2KPUfwtOd5GLJoKwP_D84dPsl3WypZDHWrxLBu9CuF6Ih1XCitrTMUBsZdgf1NUCLudV44BxgTwwaEw7RKsAR65paM-j6SGpiZaLj5UKECNssZHVyxrgBD-vHGLiE1cYxGyo6U3N3TRQq3UhV9dKKO3G7ubNwCPbcJjyUmInpm6GImIkNzeKmzbrpoolY"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 1</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Arcane Deployment</h5>
+<p class="text-muted-text text-[12px]">Legendary Script</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs active:scale-95 transition-all">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 3 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="AI Agent NFT" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLuv28MwYMrx1SuKy0X_SJu8islE5y4UcVSbzYyDUYX2uF2SDSeElH0rH0acGBnUEQs_HyjbAJY5KtePNi4oQ3B33IwR4Hkm4RfyWBAgRSVBDhHRd9CqpVGr5ms2kjH-rsDTDfBokZUTX-s2nSwsLXpBGZ4YlFkGA_MIGCUX3VOPGkNPJu7wdjdqEU0-EYTIU0n93lc2MKBs5AdkuRb_88KixXh04Mw44sk60cjbnkMi0qN0LBZslErXO4U"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 10</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Spectral Agent</h5>
+<p class="text-muted-text text-[12px]">On-Chain AI</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 4 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Mainnet Launch NFT" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLv5KZ3QpDpbIYs9McMdJMdCsCPiCW_44R5XZDOkDeIU-qmJcrhVTj2bTyPACmAB6VdQ7cOXhrUqJIiGqZrsZjIOmLnodpzjNQsyX3v8NDmzf_UqXx7K1XMZcRe5EeGVpNf-OcjG_2N4Jjsjz0TvseH5MvPqQudtafdnfK5cmUOxEJMP2iQGsIMU6zE9ojyZyyuuWhkvvWeHcYQ6Pg1UGFJ-rmE3FM8TKPhy3i3uqPv4AnkCEK8rSRE2f0XF"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 11</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Production Spires</h5>
+<p class="text-muted-text text-[12px]">Mainnet Access</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 5 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Dragon Hatchling NFT" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLsgaK1RipYpAac8_Lk8CCY7G-fadNpaOpPrVk-aYP6cDW5LW7lTG2b_hOj9KcbHwhqWf8ulSyqZ1iBjjTu_jJs8faWSgSOPWgosXPksXJyMJPHZ44JqgvUbQg-bpMGbWZY2v6uS2YB2bg0BmGw_K1ZOyNqVxUhBtiRHwtGO55DH4MVm4jreQnPqOcN01iGUfc23d0zoWu0RGG7uhP0-nW66lD1H0kmo5siHu3MDR2K1zHyMndRRhv83t1b6"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 6</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Energy Hatchling</h5>
+<p class="text-muted-text text-[12px]">Gaming Dynamic NFT</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 6 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Treasure Chest NFT" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLvM6wqox6zyp4K0ojXcHT6qlqrWC5BCEg9XwLbWoPP0iC8NfEwA9GP-MCVtnYo3LeqAp0eC7BYUPxdTDE-URmLyulTpb9ntjMd-4lt5tBAeo9cncd10j9i3WehIlQCQTIjONfW-a2TWo_LTMUy2eeWLtDnxxqnNfibKzN7SpkoN0WjUMONkW40NpgOV0V2mmiRC-zv7CQnj9G0g1MTXkyfvQ7xV14ewwxW1JtGNai5dIpbJhLiGlRBT_zMC"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 2</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Payment Hoard</h5>
+<p class="text-muted-text text-[12px]">Financial Integration</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 7 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Subnet Blueprint NFT" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida/AP1WRLu_pSS2cUJVfaQ5QXlA8wYPOY8Vr8BY0ScBx-eCd8C1ikn5dJUcksZM0l9fB0zvYQcwVw8cqI9taLBH6-gIG68oWFi3aoI7ABWaYO6hHz0mMwRqL01QNjGCR3W_d52vjfZ0xQmwFI141ZPCblpf_m6Pu5VpvCEBDobqnGxcGjPWgBrub4VyRlPDlisFqI52HYHAX7KyhRXigR21rlYzOA3qnN6IVSbquKR8R5quHrBgYBH1iXxR7Ku24ObP"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 4</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Subnet Matrix</h5>
+<p class="text-muted-text text-[12px]">Infrastructure</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 8 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Connectivity NFT" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtqugBGzPWj3Xjcz7h9iHaD7wfN54ayguWvvZdPN1JtI9Nx_zm7GuolGHNcVOuE9Q4qKjV36AiIv2ICxjXr6xN5yCL5pjquEj_8ScG0WTfZXxmtefaXaIuTokMTKiW8FfaxEfAD_e602h9HTpNvS2pARFZV39WH9bfz9qmJHuHwPb3REz0EPJI72iX0yTDmt8y7qrYKi8QNWjkZ7-aAMByEboL1BlYZwQVmraoUeNb3ux1cso7nuVzOMOi9"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 3</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Neural Web</h5>
+<p class="text-muted-text text-[12px]">Global Connectivity</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 9 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Fused Crystals NFT" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLugewSmzZECmiCrF_dv0mJhmNfKN48qbeqh0zX-wJ6brkU5WCR3pbF6Ogt94_dBrS-_dlfUlkMz5_dydYpZs4dfispq_428ZbMXX1F8FQ9WIO3xj_-CPWwyS85iGewvOvAcosXWhNtNGd4Ms89oQiB1FbpKoHNO5POnza_oU7YJQuBD8rVsXNah0L3rY8l8kvxhQJOJLJ_DdCRIahQet2XszsY6dB-eAaj7T6g5o0Blx7_LX2MGDwtsqk-E"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 3</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Crystal Fusion</h5>
+<p class="text-muted-text text-[12px]">Complex Systems</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 10 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="AI Brain NFT" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLuGAvhPddrcrPUkm8B2IkNt9QbcA5tMiWb3OXdg1lyw2zovLxfOZJE56gfWQbOaIsMng8XOYeUUrh6Ow7IxwfJWhIf1QA0waB2hu5dw8gwhMcCTDbsOyOlWguqR_OwIVWmsuovmnHc0ZbO8oh-fLYBYWZDv6eo97hS4xDw0RLnpFbK1OFw61S-F78Nhy-PDJoGOpWLlcOw-DMW0kTAQXn32tgnA8HNBMsxKMac9-OgktecFoWSVl0KATeU"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 9</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Synthetic Core</h5>
+<p class="text-muted-text text-[12px]">Agent Architecture</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Additional Placeholder cards to reach 20 -->
+<!-- Artifact Card 11 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Stone Anvil NFT" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLugqgHbKfQli0WWaf3J5ECko5v28Iqp8A8Hetljs8DpfCBFGUsQAB5Khk_c_28KAUOIxcPmplxtjV8RRsBgw4sXyekHb3VJUUzm089rjE4x8g67QAULiZApzBqmOKfFB2wqp4f6ZQpN5QS--9SvSX7Dj-QOZPKWsUTA6bBYco48z96j5wsz2K02iqAi9wy6wAeZOYi1a58S2mrnGXqg0-JjY_CznkqMYE9McT9AGfLwXKXbT49H2lIPFJ7x"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 2</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Forge Anvil</h5>
+<p class="text-muted-text text-[12px]">Foundry Dev</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 12 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Game Board NFT" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtBLU4SUtdVMFCzwungr4U_365hzYQViBrmfePJK5NOS-h5KGqtPPuatca_rvhuPnCpcP5Iak4PDvkLssasns-E0h98SEFUAafkwP1boUsSzW0p3IBECwzhui4n43dx6eNIOi0PMnbEUWOCZ6LKWsvxHmQxHD3LeBnRD7NdJoZB8F7efxNZdPx5bFIM3GK56FH4w-CO8szsTikcgCnb-wBL7OUxYHWG8oFlJ1Tk285fB23f7-K6_9pIQEdy"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 5</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Game Loop Rune</h5>
+<p class="text-muted-text text-[12px]">Game Logic</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 13 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="ZK NFT" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLvc0oSrjF0FIz6CB5oYmU3WmqzN-MvN2HENBgH2jAGE9xKeMbNe1RdMXQ6MgzrLOkEVk1BaLxCR1Iab1QEaiumYIfvYw-NyBET_iD0kLXl7iOepUnHGk93sfPU6KHzH4JiUZP8ahN9RCanXBdUpTVnbzal340uuPMVC-C1VLQeMQtl17QGmCJyBHq0VL8IqDOdv_p5G9ZvW5Gcf0F9OVHfV8bPfrwLVyjGWN35mkZTWK4oq81YMH_-Y_JU"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 8</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Zero Vortex</h5>
+<p class="text-muted-text text-[12px]">ZK Integration</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 14 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Cross-Chain NFT" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLsbD7ErtSGMCDQjvd4UOCjENThx_lQjvqLeg1qa2lBJt04ZefOk4G7j1bcjr0MNNToZ50fBzl7L-GCAkmoebwXVldDUjJP2QVHh4qX2iySlvDEIVzauxjbBMT4CrHJUNytN0-PW5lVfDonHychhpBHNIDCgAQye47war67BUpVuJB0nzM_IM41dgS3ZiWyliXBPW-aBufFzJU0dyKBnhQD1HfBhyTv0G-tkv8GLOhsvoWJSijmqPYUiNBfv"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 5</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Rune Bridge</h5>
+<p class="text-muted-text text-[12px]">Teleport Protocol</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 15 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Leaderboard Obelisk" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtnyu1P9yd1lm6N21lHEsMfT4xsPc6CLifmgocamijdA0NxsU6cmSXdJu0OYy5uDwvNbWpit6Azy9fk-1mZGGvzXqIDs5kILXtYzrjEZG6acxTKyu6SNrG7_V-eALRxUKRp7U2wOkk3nCFT1y7q3f1-dSIZu_wBexkUnVx97w7LsMDM80rkdtbp-dc5lc4ChEzDxiyjgfn3_FCPVFugGfkKLoV7BS6JbkBsL_GkHrmpPdx-kt4ZSTQaH_5t"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 7</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Eternal Rank</h5>
+<p class="text-muted-text text-[12px]">Scoring Module</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 16 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Mechanical Heart" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLt8G1TAxpACluwF85C-ANI1hAb-Gs67hf_HqFuCqGdv1B2lHd-NyXzjrcs2iA6XlW65BCoDm47rvl_Fyaq50_HgSB7KZWJRaggvblh-AG8K50QN2G4-MuTbICoiURBaTeI2COydB9_t4-jGybfQdaQY5yl6Mzboc2AJcluzw6LS053TWxiP4NfXQcR6gb1VXuTd7wW-eOQGBRsLwwGoUgeYux8a3SdoK2s-OeQn4DYhzszhS2SLwEBTW3Db"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 6</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Precompile Core</h5>
+<p class="text-muted-text text-[12px]">Optimized Logic</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 17 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Council NFT" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtCTmW9_tF0316-niHQxJmqSp1b6DhJeOlV3qLFOOSiXumiLjCHS1yjKu3bSYETI9iXYsOqCFpLkRp14NBiUb7HVAAWxnxqzQlEEpBrAqbatp4xAtFDd0iM441fPkXBcm1OnHdQMj5_4XTeQedWSfM1Wy56nQTILZEb9cERsJBR9vtraJTo1eA8g0TIpeaeYWer0h8rFAMVHnophOn5SKx3S3rLHVr4XmjcTHg_BiVGgijgpwuhk40YkoM"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 10</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Glow Council</h5>
+<p class="text-muted-text text-[12px]">DAO Protocol</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 18 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Mechanical Owl" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtkqYJCNOcwhEPbqe6xwz20ejbhVdAfY1jAF5eKDlqg4iDNVBkw_1Zbj5S3XvjWLnck5TkTFFt3jHeI1028gwKnl_6xnGpSI4fKmt3vbTowIJbrn1ZLH6ozepzDFgB1eDEFxTA027F-bprUIUOvpDWr0Dw-rFWNcHa5b5gb1WX2kyVxWMLHYJWFoF3FWXgric7Qgtxfi6i8temI0Ev9gMzvxF1suovio-BmHYJis-fAoSZKt7nkRWDM2ioS"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">WEEK 12</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Sentinel Owl</h5>
+<p class="text-muted-text text-[12px]">Final AI Agent</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 19 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Smart Contract Scroll" class="w-full h-full object-cover opacity-60" src="https://lh3.googleusercontent.com/aida/AP1WRLsrVuekiuInDug0KvON9VNMs125Chy3jUBnGm-XfFKnvuSQfy7LvDvPIobwIrA2KPUfwtOd5GLJoKwP_D84dPsl3WypZDHWrxLBu9CuF6Ih1XCitrTMUBsZdgf1NUCLudV44BxgTwwaEw7RKsAR65paM-j6SGpiZaLj5UKECNssZHVyxrgBD-vHGLiE1cYxGyo6U3N3TRQq3UhV9dKKO3G7ubNwCPbcJjyUmInpm6GImIkNzeKmzbrpoolY"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">DUPLICATE</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Legacy Scroll</h5>
+<p class="text-muted-text text-[12px]">Redundant Copy</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+<!-- Artifact Card 20 -->
+<div class="rune-glass group relative overflow-hidden rounded-xl border border-border-rune hover:border-primary/60 transition-all duration-300 transform hover:-translate-y-1 glow-border-red">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Core Builder Shield" class="w-full h-full object-cover opacity-60" src="https://lh3.googleusercontent.com/aida/AP1WRLtQzGTURLt_fuDvkShHTvTF3dUkFPlSOYe54b3MFKrhx6J4qOlyNaEiuQgNo8zW5AzzWGoubFjeki1eQmord65KFSlRmOz78tn7kNczXKcLkzqscc0k0EC_4kYpxNHcii_8Q05o7GW7UzuGpiAPd5Myiip5_c352wKJUUCD1a8YowKbdDrDvZbbpXKmb8jhhieBaoCPXP92PiE3joA7Ft4LyBhFatsFdWnXy3PAh2dVBEYvgo_d1KSu2MgF"/>
+<div class="absolute top-2 right-2 bg-background/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">DUPLICATE</div>
+</div>
+<div class="p-md space-y-md">
+<div>
+<h5 class="font-body-bold text-body-bold truncate text-on-surface">Crest Fragment</h5>
+<p class="text-muted-text text-[12px]">Common Variant</p>
+</div>
+<div class="flex flex-col gap-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+<button class="w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded-lg text-xs">View Lore</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-rune mt-xxl">
+<div class="flex flex-col md:flex-row justify-between items-center w-full py-xl px-margin-desktop max-w-7xl mx-auto gap-md">
+<span class="font-label-caps text-label-caps text-muted-text uppercase">© 2026 MINI HACK RIFT. ALL RUNES RESERVED.</span>
+<div class="flex gap-lg">
+<a class="font-label-sm text-label-sm text-muted-text hover:text-avalanche-glow transition-colors" href="#">Program Site</a>
+<a class="font-label-sm text-label-sm text-muted-text hover:text-avalanche-glow transition-colors" href="#">Community</a>
+<a class="font-label-sm text-label-sm text-muted-text hover:text-avalanche-glow transition-colors" href="#">Whitepaper</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for smooth entry animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.rune-glass');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 50 * index);
+            });
+        });
+
+        // Toggle interaction logic for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                ripple.classList.add('absolute', 'bg-white/20', 'rounded-full', 'animate-ping');
+                ripple.style.width = '10px';
+                ripple.style.height = '10px';
+                ripple.style.left = e.offsetX + 'px';
+                ripple.style.top = e.offsetY + 'px';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 500);
+            });
+        });
+    </script>
+</body></html>

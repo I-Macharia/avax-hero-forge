@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Builder's Inventory | MINI HACK 2026</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Space+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#003116",
+                    "primary": "#ffb3ae",
+                    "background": "#15121d",
+                    "error": "#ffb4ab",
+                    "mana-glow": "#C36DFF",
+                    "popover-surface": "#15111F",
+                    "secondary-fixed": "#f1dbff",
+                    "on-primary-fixed": "#410005",
+                    "input-base": "#292433",
+                    "surface-container-high": "#2c2834",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-highest": "#37333f",
+                    "inverse-on-surface": "#322e3b",
+                    "on-surface": "#e7dff0",
+                    "inverse-surface": "#e7dff0",
+                    "border-rune": "#363040",
+                    "tertiary": "#57df88",
+                    "surface": "#15121d",
+                    "surface-container-low": "#1d1a25",
+                    "on-secondary-fixed": "#2d0050",
+                    "surface-dim": "#15121d",
+                    "surface-container-lowest": "#0f0c18",
+                    "tertiary-container": "#00a658",
+                    "on-tertiary-fixed": "#00210d",
+                    "on-primary-container": "#5c0009",
+                    "on-error": "#690005",
+                    "secondary": "#deb7ff",
+                    "outline": "#ae8785",
+                    "secondary-fixed-dim": "#deb7ff",
+                    "primary-fixed": "#ffdad7",
+                    "muted-text": "#AEA0B1",
+                    "on-secondary": "#4a007f",
+                    "on-primary": "#68000c",
+                    "on-primary-fixed-variant": "#930015",
+                    "primary-fixed-dim": "#ffb3ae",
+                    "inverse-primary": "#c0001f",
+                    "surface-bright": "#3b3744",
+                    "surface-container": "#211e2a",
+                    "surface-variant": "#37333f",
+                    "error-container": "#93000a",
+                    "avalanche-glow": "#FF5A47",
+                    "card-surface": "#1A1624",
+                    "tertiary-fixed": "#76fca1",
+                    "tertiary-fixed-dim": "#57df88",
+                    "on-tertiary-fixed-variant": "#005228",
+                    "on-secondary-container": "#d9aeff",
+                    "surface-tint": "#ffb3ae",
+                    "on-surface-variant": "#e8bcb9",
+                    "outline-variant": "#5e3f3d",
+                    "secondary-container": "#7300c1",
+                    "on-secondary-fixed-variant": "#6a00b2",
+                    "on-background": "#e7dff0",
+                    "primary-container": "#ff5353",
+                    "on-tertiary": "#00391a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "xxl": "64px",
+                    "xl": "32px",
+                    "margin-desktop": "32px",
+                    "unit": "4px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "headline-md": ["Space Grotesk"],
+                    "body-bold": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-base": ["Inter"],
+                    "display-hero": ["Space Grotesk"],
+                    "stat-value": ["Space Grotesk"],
+                    "label-caps": ["Space Grotesk"],
+                    "headline-lg": ["Space Grotesk"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-bold": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-hero": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "stat-value": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .rune-glass {
+            background: rgba(26, 22, 36, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #363040;
+        }
+        .glow-red {
+            box-shadow: 0 0 15px rgba(255, 83, 83, 0.2);
+        }
+        .glow-ring-primary {
+            box-shadow: 0 0 20px rgba(255, 179, 174, 0.15);
+        }
+        .lava-gradient {
+            background: linear-gradient(135deg, #ff5353 0%, #68000c 100%);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-base min-h-screen overflow-x-hidden pb-24">
+<!-- Global Header -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/70 backdrop-blur-xl border-b border-border-rune shadow-[0_0_15px_rgba(255,83,83,0.1)] h-20 flex items-center px-margin-mobile md:px-margin-desktop">
+<div class="flex justify-between items-center w-full max-w-7xl mx-auto">
+<span class="font-headline-md text-headline-md tracking-tighter text-primary">MINI HACK 2026</span>
+<div class="flex gap-md">
+<button class="material-symbols-outlined text-primary active:scale-95 duration-100">notifications</button>
+<button class="material-symbols-outlined text-primary active:scale-95 duration-100">settings</button>
+</div>
+</div>
+</header>
+<main class="pt-24 px-margin-mobile max-w-7xl mx-auto space-y-lg">
+<!-- Profile & Hero Stats -->
+<section class="space-y-md">
+<div class="flex items-center gap-md">
+<div class="relative">
+<div class="w-20 h-20 rounded-xl overflow-hidden border-2 border-primary glow-ring-primary">
+<img class="w-full h-full object-cover" data-alt="A cinematic portrait of a heroic digital builder character, wearing dark obsidian armor with glowing red circuitry patterns. The art style is high-end heroic fantasy with a modern tech-layer, set against a dark, cosmic nocturnal void background. Warm lava-red lighting illuminates the character's focused expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzBPgsTPHcfaqvL7qzh3AJ6s7Ls8eXze6MAGiDRB6ao_y45CdMLUC4Lbhtf6ch6_PbZ0HhoOuig1HS5DF0hleZlcJWwm_tVISFsWFNdynwMuPjtDJIT5zxuEDYb6aNO00jqTbKebyfwtkxloGGxLwJdPDDegcdAstF02lijB-JmFnhsig6CQiYITot7HCMdYm7s6R9hJIEJSFw_azz1okfqTZ_frN_7ws_DL7wovL6mDgDQ8gaPtvyTjb-WosoF-VFvwrAEHgNV5rO"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary text-on-primary px-2 py-0.5 rounded-full font-label-caps text-label-caps">LVL 42</div>
+</div>
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">ELARA_VOID</h1>
+<p class="font-label-sm text-label-sm text-muted-text flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified</span> PRESTIGE BUILDER
+                    </p>
+</div>
+</div>
+<!-- Stacked Stats -->
+<div class="grid grid-cols-1 gap-sm">
+<div class="rune-glass p-md rounded-xl flex justify-between items-center group active:scale-[0.98] transition-transform">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center border border-border-rune">
+<span class="material-symbols-outlined text-primary">leaderboard</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-muted-text">Global Rank</p>
+<p class="font-stat-value text-stat-value text-primary">#1,402</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-muted-text group-hover:text-primary">chevron_right</span>
+</div>
+<div class="rune-glass p-md rounded-xl flex justify-between items-center group active:scale-[0.98] transition-transform">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center border border-border-rune">
+<span class="material-symbols-outlined text-avalanche-glow">bolt</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-muted-text">Power Score</p>
+<p class="font-stat-value text-stat-value text-avalanche-glow">84,920</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-muted-text group-hover:text-avalanche-glow">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Hall of Champions Medallions (Horizontal Scroll) -->
+<section class="space-y-sm">
+<div class="flex justify-between items-end">
+<h2 class="font-label-caps text-label-caps text-muted-text">Hall of Champions</h2>
+<button class="font-label-sm text-label-sm text-primary">View All</button>
+</div>
+<div class="flex overflow-x-auto gap-md no-scrollbar pb-2 -mx-margin-mobile px-margin-mobile">
+<!-- Medallion 1 -->
+<div class="flex-shrink-0 w-32 aspect-square rune-glass rounded-full border-2 border-primary/40 flex flex-col items-center justify-center text-center p-sm glow-red relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 bg-gradient-to-t from-primary to-transparent"></div>
+<span class="material-symbols-outlined text-4xl text-primary mb-1">workspace_premium</span>
+<p class="font-label-sm text-[10px] leading-tight text-on-surface uppercase">Rift<br/>Breaker</p>
+</div>
+<!-- Medallion 2 -->
+<div class="flex-shrink-0 w-32 aspect-square rune-glass rounded-full border-2 border-tertiary/40 flex flex-col items-center justify-center text-center p-sm relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 bg-gradient-to-t from-tertiary to-transparent"></div>
+<span class="material-symbols-outlined text-4xl text-tertiary mb-1">shield</span>
+<p class="font-label-sm text-[10px] leading-tight text-on-surface uppercase">Core<br/>Sentry</p>
+</div>
+<!-- Medallion 3 -->
+<div class="flex-shrink-0 w-32 aspect-square rune-glass rounded-full border-2 border-mana-glow/40 flex flex-col items-center justify-center text-center p-sm relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 bg-gradient-to-t from-mana-glow to-transparent"></div>
+<span class="material-symbols-outlined text-4xl text-mana-glow mb-1">auto_awesome</span>
+<p class="font-label-sm text-[10px] leading-tight text-on-surface uppercase">Rune<br/>Master</p>
+</div>
+<!-- Medallion 4 (Locked) -->
+<div class="flex-shrink-0 w-32 aspect-square bg-card/40 rounded-full border-2 border-border-rune flex flex-col items-center justify-center text-center p-sm grayscale opacity-50">
+<span class="material-symbols-outlined text-4xl text-muted-text mb-1">lock</span>
+<p class="font-label-sm text-[10px] leading-tight text-muted-text uppercase">Apex<br/>King</p>
+</div>
+</div>
+</section>
+<!-- Artifacts Grid (2-column) -->
+<section class="space-y-sm">
+<div class="flex justify-between items-end">
+<h2 class="font-label-caps text-label-caps text-muted-text">Inventory Artifacts</h2>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded bg-surface-container text-muted-text">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-surface-container text-muted-text">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<!-- Artifact 1 -->
+<div class="rune-glass rounded-xl p-sm space-y-sm group hover:scale-[1.02] transition-all border-primary/20">
+<div class="relative aspect-square rounded-lg overflow-hidden border border-border-rune bg-surface-container-lowest">
+<img class="w-full h-full object-cover" data-alt="A rare digital artifact of a glowing red crystalline energy core, suspended in mid-air with volcanic debris orbiting it. High-contrast obsidian background with cinematic red embers. Style is heroic fantasy Web3 item design, sharp details, glassmorphism UI overlay." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5qHUkmO9vPopFrI502XVBcuQbFdi34WBz1qs5Z5Pv9fifOqOAmG3HHpbz3T3TLuFvO7dz41TReeuQvpGTWzG6H-QUKrYIyEYZhU5_ERZ391Yt20L8qwHSt5__jOCIhHaH8UiY0RH-y6kjLT8-EuvYL83Ed-3JJnulAq7i-PL29NNXeVdRgbo_5lz0_zJgNfQ6Ok0X3PZL1viFLER_v-gXYejOy-3X0DBfA2Owz6xg3AMdqOT_2y-MDHQjV1n4cejuLbpWlvSeYXy9"/>
+<div class="absolute top-2 right-2 bg-primary-container px-2 py-0.5 rounded text-[10px] font-label-caps text-white">EPIC</div>
+</div>
+<div>
+<h3 class="font-body-bold text-sm text-on-surface truncate">Ignis Core</h3>
+<div class="flex justify-between items-center mt-1">
+<span class="text-xs text-muted-text">PWR +450</span>
+<span class="material-symbols-outlined text-primary text-[16px]">local_fire_department</span>
+</div>
+</div>
+</div>
+<!-- Artifact 2 -->
+<div class="rune-glass rounded-xl p-sm space-y-sm group hover:scale-[1.02] transition-all border-tertiary/20">
+<div class="relative aspect-square rounded-lg overflow-hidden border border-border-rune bg-surface-container-lowest">
+<img class="w-full h-full object-cover" data-alt="A glowing green emerald gauntlet with silver etched runes, emitting a soft mystical mist. The object is floating against a dark, nocturnal studio background. Brutalist minimal digital art style, high fidelity textures, secondary lighting accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqrSbO4hD8U79tKcCaioSZkrbhNkjFROxvksG4Pfs0_gUQlyy-XJJX-LWRCKv7vwrLVH4n4Lq3HIo_UkQUMxsmAzYxrsJPLcwLrYUByHE51r1wiT5Zx0HGfl8rrBjpfLc9TTLdET-naamqCPutzGkcoscOzszC5I7rQFNAQn4sjDSVU1ORUMzRd6QErQbB3KOctcfYl4q5SkRvMw88Tue84NFKfaAUF7bop9OFAKySG1vz_tYqL1lDwRGGhMc2Y5KFTBQdqnUPi3Dk"/>
+<div class="absolute top-2 right-2 bg-tertiary-container px-2 py-0.5 rounded text-[10px] font-label-caps text-white">RARE</div>
+</div>
+<div>
+<h3 class="font-body-bold text-sm text-on-surface truncate">Jade Siphon</h3>
+<div class="flex justify-between items-center mt-1">
+<span class="text-xs text-muted-text">PWR +280</span>
+<span class="material-symbols-outlined text-tertiary text-[16px]">eco</span>
+</div>
+</div>
+</div>
+<!-- Artifact 3 -->
+<div class="rune-glass rounded-xl p-sm space-y-sm group hover:scale-[1.02] transition-all border-mana-glow/20">
+<div class="relative aspect-square rounded-lg overflow-hidden border border-border-rune bg-surface-container-lowest">
+<img class="w-full h-full object-cover" data-alt="A magical floating purple grimoire with pages made of light, ancient runes hovering around the book. Dark cosmic background with atmospheric violet layering. Web3 NFT aesthetic, high contrast, luminous details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5QEIk3PY3sYiT80jVyxI8OQ-LF_xStrBVfTl21lV4HDUiWD_AMhF0kjVvKA-Q84fGEHfGT7sPU2lECuXS5RvspdpZkHmtc2ivEPibn5g6L8IBHLGhH5-lEa2gbmrhhpdXu9KYqm-9ky5oO_UBZwTII4yzrV3ZzL009nHOGkChb_h_HlS76Mef_lcgFO7Ytu0DP3xmZgJpVzakYGqr5z6NnLDirTVs1nvnVoQIE7rMh0PS2-RLAfzHM5kC28zY-1GRFqJMJX_umE7_"/>
+<div class="absolute top-2 right-2 bg-mana-glow px-2 py-0.5 rounded text-[10px] font-label-caps text-white">MYSTIC</div>
+</div>
+<div>
+<h3 class="font-body-bold text-sm text-on-surface truncate">Void Tome</h3>
+<div class="flex justify-between items-center mt-1">
+<span class="text-xs text-muted-text">PWR +610</span>
+<span class="material-symbols-outlined text-mana-glow text-[16px]">menu_book</span>
+</div>
+</div>
+</div>
+<!-- Artifact 4 -->
+<div class="rune-glass rounded-xl p-sm space-y-sm group hover:scale-[1.02] transition-all border-primary/20">
+<div class="relative aspect-square rounded-lg overflow-hidden border border-border-rune bg-surface-container-lowest">
+<img class="w-full h-full object-cover" data-alt="A heavy obsidian warhammer with red magma flowing through its cracks. It emits a subtle red heat haze. Minimalist studio lighting, dark background, premium digital asset design for a fantasy RPG." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBRHhcYd3AJGDggJtazx5SVKhJu4uZzQeUW2nOncsbEbA_JDpPeH7KInFg8dKXNdwpA9MaiwNLJz02syQnVzH1iWmHFxI7Xy-TBN3pssTiT7NXSou-Pc_cMEetLWdp5urVS3tj3jBND7aJgZ3Gd5cfMveK6ZBUWnxyfjq2iDJ-4L6NqWa2wujLM8VzfWMzBnu7uKOxgWl-VY0MMJWXQza6e9_mModBmYQlfxBDew3zcnIzMFaYzOzwb18V2WIlYnhMIeGQUvAZzSKz"/>
+<div class="absolute top-2 right-2 bg-primary-container px-2 py-0.5 rounded text-[10px] font-label-caps text-white">EPIC</div>
+</div>
+<div>
+<h3 class="font-body-bold text-sm text-on-surface truncate">Rift Mauler</h3>
+<div class="flex justify-between items-center mt-1">
+<span class="text-xs text-muted-text">PWR +520</span>
+<span class="material-symbols-outlined text-primary text-[16px]">swords</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Action -->
+<button class="w-full lava-gradient h-14 rounded-xl font-body-bold text-white flex items-center justify-center gap-sm glow-red active:scale-[0.97] transition-all">
+<span class="material-symbols-outlined">auto_fix_high</span>
+            UPGRADE INVENTORY
+        </button>
+</main>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-surface/70 backdrop-blur-xl md:hidden px-margin-mobile py-sm flex justify-around items-center border-t border-border-rune shadow-[0_-5px_20px_rgba(0,0,0,0.4)]">
+<div class="flex flex-col items-center gap-xs text-muted-text transition-colors">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-label-caps">Quests</span>
+</div>
+<div class="flex flex-col items-center gap-xs text-primary font-body-bold pb-1 transition-all">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-[10px] font-label-caps">Inventory</span>
+</div>
+<div class="flex flex-col items-center gap-xs text-muted-text transition-colors">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-[10px] font-label-caps">Leaderboard</span>
+</div>
+<div class="flex flex-col items-center gap-xs text-muted-text transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-label-caps">Profile</span>
+</div>
+</nav>
+<!-- Footer (Embedded as per schema) -->
+<footer class="mt-12 bg-surface-container-lowest border-t border-border-rune py-xl px-margin-mobile">
+<div class="max-w-7xl mx-auto flex flex-col items-center gap-md">
+<span class="font-label-caps text-label-caps text-muted-text tracking-[0.2em]">© 2026 MINI HACK RIFT. ALL RUNES RESERVED.</span>
+<div class="flex gap-lg">
+<a class="font-label-sm text-label-sm text-muted-text hover:text-avalanche-glow transition-colors" href="#">Program Site</a>
+<a class="font-label-sm text-label-sm text-muted-text hover:text-avalanche-glow transition-colors" href="#">Community</a>
+<a class="font-label-sm text-label-sm text-muted-text hover:text-avalanche-glow transition-colors" href="#">Whitepaper</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions for inventory cards
+        document.querySelectorAll('.rune-glass').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.add('scale-95');
+                setTimeout(() => card.classList.remove('scale-95'), 100);
+            });
+        });
+
+        // Floating particle effect simulation (Canvas-less, using DOM elements for simplicity/perf)
+        const createParticle = () => {
+            const p = document.createElement('div');
+            const size = Math.random() * 2 + 1;
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            p.style.background = 'rgba(255, 83, 83, 0.4)';
+            p.style.position = 'fixed';
+            p.style.borderRadius = '50%';
+            p.style.left = `${Math.random() * 100}vw`;
+            p.style.top = '110vh';
+            p.style.pointerEvents = 'none';
+            p.style.zIndex = '0';
+            p.style.transition = `all ${Math.random() * 5 + 5}s linear`;
+            document.body.appendChild(p);
+
+            setTimeout(() => {
+                p.style.top = '-10vh';
+                p.style.opacity = '0';
+            }, 10);
+
+            setTimeout(() => {
+                p.remove();
+            }, 10000);
+        };
+
+        setInterval(createParticle, 800);
+    </script>
+</body></html>
