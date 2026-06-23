@@ -1,127 +1,233 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { toast } from "sonner";
-import confetti from "canvas-confetti";
+import { useQuery } from "@tanstack/react-query";
+import { useState, useMemo } from "react";
+import {
+  Sparkles, Rocket, Wrench, Gamepad2, Brain, Trophy, Wallet, Cpu, Lock,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/hooks/useSession";
-import { BadgeCard } from "@/components/BadgeCard";
-import { getWalletClient, publicClient } from "@/lib/contract/client";
-import { miniHackAbi } from "@/lib/contract/abi";
-import { CONTRACT_ADDRESS, txUrl } from "@/lib/contract/config";
-import { recordVerifiedMint } from "@/lib/mints.functions";
 
 export const Route = createFileRoute("/_authenticated/quests")({
   head: () => ({ meta: [{ title: "Quests · MiniHack Heroes" }] }),
   component: QuestsPage,
 });
 
+type TrackKey = "All" | "Payments" | "Gaming" | "Agentic AI";
+
+const TRACK_META: Record<
+  Exclude<TrackKey, "All">,
+  { tint: string; chip: string; icon: React.ComponentType<{ className?: string }> }
+> = {
+  Payments: { tint: "bg-orange-500/15 text-orange-400", chip: "bg-orange-500/10 text-orange-300", icon: Wallet },
+  Gaming: { tint: "bg-lime-500/15 text-lime-400", chip: "bg-lime-500/10 text-lime-300", icon: Gamepad2 },
+  "Agentic AI": { tint: "bg-blue-500/15 text-blue-400", chip: "bg-blue-500/10 text-blue-300", icon: Brain },
+};
+
+function trackOf(s: string | null | undefined): Exclude<TrackKey, "All"> {
+  if (s === "Gaming" || s === "Agentic AI" || s === "Payments") return s;
+  return "Payments";
+}
+
+function iconFor(name: string | null | undefined) {
+  switch (name) {
+    case "trophy": return Trophy;
+    case "rocket": return Rocket;
+    case "wrench": return Wrench;
+    case "cpu": return Cpu;
+    case "brain": return Brain;
+    case "wallet": return Wallet;
+    case "gamepad": return Gamepad2;
+    default: return Sparkles;
+  }
+}
+
 function QuestsPage() {
-  const { user } = useSession();
-  const qc = useQueryClient();
-  const submitVerifiedMint = useServerFn(recordVerifiedMint);
+  const [filter, setFilter] = useState<TrackKey>("All");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["quests", user?.id],
+    queryKey: ["quests-page"],
     queryFn: async () => {
-      const [quests, completions, mints] = await Promise.all([
-        supabase.from("quests").select("*").eq("active", true).order("points"),
-        user
-          ? supabase.from("quest_completions").select("*").eq("user_id", user.id)
-          : Promise.resolve({ data: [] }),
-        user
-          ? supabase.from("nft_mints").select("quest_id").eq("user_id", user.id)
-          : Promise.resolve({ data: [] }),
+      const [questsRes, signupsRes, statsRes] = await Promise.all([
+        supabase.from("quests").select("*").order("week").order("points"),
+        supabase.rpc("get_quest_signups"),
+        supabase.rpc("get_public_stats"),
       ]);
+      const stats = (statsRes.data ?? {}) as {
+        participants?: number; completions?: number; quests?: number;
+      };
+      const signups = new Map<string, number>(
+        (signupsRes.data ?? []).map((r: { quest_id: string; signups: number }) => [r.quest_id, Number(r.signups)]),
+      );
       return {
-        quests: quests.data ?? [],
-        completions: completions.data ?? [],
-        mintedQuestIds: new Set((mints.data ?? []).map((m) => m.quest_id)),
+        quests: questsRes.data ?? [],
+        signups,
+        stats: {
+          participants: stats.participants ?? 0,
+          completions: stats.completions ?? 0,
+          quests: stats.quests ?? 0,
+        },
       };
     },
   });
 
-  const mintMutation = useMutation({
-    mutationFn: async (quest: { id: string; badge_token_id: number | null; metadata_uri: string | null }) => {
-      if (!user) throw new Error("Sign in first");
-      if (CONTRACT_ADDRESS === "0x0000000000000000000000000000000000000000") {
-        throw new Error("Contract not deployed yet — set VITE_CONTRACT_ADDRESS.");
-      }
-      const { account, client } = await getWalletClient();
-      const badgeId = BigInt(quest.badge_token_id ?? 0);
-      const uri = quest.metadata_uri ?? `ipfs://placeholder/${quest.id}.json`;
+  const filtered = useMemo(() => {
+    if (!data) return [];
+    if (filter === "All") return data.quests;
+    return data.quests.filter((q) => trackOf(q.track) === filter);
+  }, [data, filter]);
 
-      const { request } = await publicClient.simulateContract({
-        account,
-        address: CONTRACT_ADDRESS,
-        abi: miniHackAbi,
-        functionName: "mintTo",
-        args: [account, badgeId, uri],
-      });
-      const hash = await client.writeContract(request);
-      toast.message("Tx submitted", { description: hash, action: { label: "View", onClick: () => window.open(txUrl(hash)) } });
-
-      await publicClient.waitForTransactionReceipt({ hash });
-      // Server verifies the on-chain tx and records the mint via service role.
-      await submitVerifiedMint({ data: { questId: quest.id, txHash: hash } });
-      return { hash };
-    },
-    onSuccess: ({ hash }) => {
-      confetti({ particleCount: 160, spread: 80, origin: { y: 0.6 } });
-      toast.success("Badge minted!", {
-        description: "On-chain forever.",
-        action: { label: "Snowtrace", onClick: () => window.open(txUrl(hash)) },
-      });
-      qc.invalidateQueries({ queryKey: ["quests"] });
-      qc.invalidateQueries({ queryKey: ["dashboard"] });
-      qc.invalidateQueries({ queryKey: ["live-stats"] });
-    },
-    onError: (err) => toast.error(err instanceof Error ? err.message : "Mint failed"),
-  });
-
-  if (isLoading || !data) return <div className="p-8 text-center text-muted-foreground">Loading quests…</div>;
-
-  const completedIds = new Set(data.completions.map((c) => c.quest_id));
+  if (isLoading || !data) {
+    return <div className="p-8 text-center text-muted-foreground">Loading quests…</div>;
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
-      <h1 className="text-3xl font-bold">Quests &amp; Achievements</h1>
-      <p className="mt-2 text-muted-foreground">
-        Complete a quest to unlock its badge. Mint to claim it on-chain forever.
-      </p>
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            Build · Ship · Earn
+          </p>
+          <h1 className="mt-2 text-3xl sm:text-4xl font-bold leading-tight max-w-2xl">
+            See who&apos;s tackling quests and where the leaderboard stands.
+          </h1>
+          <p className="mt-3 text-muted-foreground max-w-2xl">
+            Real-time submissions from Tally, aggregated across every Mini Hack quest.
+            Complete a quest, climb the board.
+          </p>
+        </div>
+        <TabSwitcher current="quests" />
+      </header>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {data.quests.map((q) => {
-          const completed = completedIds.has(q.id);
-          const minted = data.mintedQuestIds.has(q.id);
-          return (
-            <div key={q.id} className="space-y-3">
-              <BadgeCard
-                title={q.title}
-                subtitle={q.description ?? undefined}
-                icon={q.icon ?? "sparkles"}
-                earned={completed}
-                progress={completed ? 100 : 0}
-              />
-              <div className="flex items-center justify-between gap-2 px-1">
-                <span className="text-xs text-muted-foreground">{q.points} pts</span>
-                {minted ? (
-                  <span className="text-xs font-medium text-success">✓ Minted</span>
-                ) : completed ? (
-                  <button
-                    onClick={() => mintMutation.mutate(q)}
-                    disabled={mintMutation.isPending}
-                    className="rounded-lg bg-gradient-to-r from-primary to-accent px-3 py-1.5 text-xs font-semibold text-white glow-ring disabled:opacity-50"
-                  >
-                    {mintMutation.isPending ? "Minting…" : "Mint badge"}
-                  </button>
-                ) : (
-                  <span className="text-xs text-muted-foreground">Locked</span>
-                )}
-              </div>
-            </div>
-          );
-        })}
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <Stat label="Quests" value={data.stats.quests} color="text-foreground" />
+        <Stat label="Total quest completions" value={data.stats.completions} color="text-emerald-400" />
+        <Stat label="Participants" value={data.stats.participants} color="text-primary" />
+      </div>
+
+      <div className="mt-6 flex flex-wrap gap-2">
+        {(["All", "Payments", "Gaming", "Agentic AI"] as TrackKey[]).map((t) => (
+          <button
+            key={t}
+            onClick={() => setFilter(t)}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium border transition ${
+              filter === t
+                ? "bg-primary text-primary-foreground border-primary"
+                : "border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {filtered.map((q) => (
+          <QuestCard key={q.id} quest={q} signups={data.signups.get(q.id) ?? 0} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Stat({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card/60 p-5">
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className={`mt-2 text-4xl font-bold font-display ${color}`}>{value.toLocaleString()}</p>
+    </div>
+  );
+}
+
+function TabSwitcher({ current }: { current: "quests" | "leaderboard" }) {
+  return (
+    <div className="inline-flex rounded-full border border-border bg-card/60 p-1">
+      <a
+        href="/quests"
+        className={`px-4 py-1.5 rounded-full text-sm font-medium ${
+          current === "quests" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+        }`}
+      >
+        Quests
+      </a>
+      <a
+        href="/leaderboard"
+        className={`px-4 py-1.5 rounded-full text-sm font-medium ${
+          current === "leaderboard" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+        }`}
+      >
+        Leaderboard
+      </a>
+    </div>
+  );
+}
+
+type QuestRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  points: number;
+  icon: string | null;
+  track: string | null;
+  week: number | null;
+  tally_form_url: string | null;
+  locked: boolean | null;
+  unlock_cohort: number | null;
+};
+
+function QuestCard({ quest, signups }: { quest: QuestRow; signups: number }) {
+  const track = trackOf(quest.track);
+  const meta = TRACK_META[track];
+  const Icon = iconFor(quest.icon);
+  const locked = !!quest.locked;
+
+  return (
+    <div
+      className={`relative rounded-2xl border bg-card/60 p-5 flex flex-col gap-4 ${
+        locked ? "border-dashed border-border/60" : "border-border"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${meta.chip}`}>
+          {track} · Week {quest.week ?? 1}
+        </span>
+        <span className="rounded-full bg-muted/60 px-2.5 py-1 text-[10px] font-semibold text-muted-foreground">
+          {quest.points} pts
+        </span>
+      </div>
+
+      <div className={`grid place-items-center h-14 w-14 rounded-xl ${meta.tint}`}>
+        <Icon className="h-7 w-7" />
+      </div>
+
+      <div>
+        <h3 className="text-base font-semibold leading-snug">{quest.title}</h3>
+        {quest.description && (
+          <p className="mt-1.5 text-sm text-muted-foreground line-clamp-3">{quest.description}</p>
+        )}
+      </div>
+
+      <div className="mt-auto">
+        {locked ? (
+          <div className="rounded-lg border border-dashed border-border/60 px-3 py-2 text-xs text-muted-foreground flex items-center gap-2">
+            <Lock className="h-3.5 w-3.5" />
+            Unlocks in Cohort {quest.unlock_cohort ?? "?"}
+          </div>
+        ) : (
+          <>
+            <p className="text-xs text-muted-foreground mb-2">
+              <span className="font-semibold text-foreground">{signups}</span> signed up
+            </p>
+            <a
+              href={quest.tally_form_url ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`block w-full text-center rounded-xl bg-foreground text-background px-4 py-2.5 text-sm font-semibold ${
+                quest.tally_form_url ? "hover:opacity-90" : "opacity-40 pointer-events-none"
+              }`}
+            >
+              {quest.tally_form_url ? "Submit quest" : "Coming soon"}
+            </a>
+          </>
+        )}
       </div>
     </div>
   );
