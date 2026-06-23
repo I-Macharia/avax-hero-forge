@@ -53,6 +53,7 @@ export type Database = {
           id: string
           metadata_uri: string | null
           minted_at: string
+          owner_address: string | null
           quest_id: string | null
           token_id: number | null
           tx_hash: string
@@ -64,6 +65,7 @@ export type Database = {
           id?: string
           metadata_uri?: string | null
           minted_at?: string
+          owner_address?: string | null
           quest_id?: string | null
           token_id?: number | null
           tx_hash: string
@@ -75,6 +77,7 @@ export type Database = {
           id?: string
           metadata_uri?: string | null
           minted_at?: string
+          owner_address?: string | null
           quest_id?: string | null
           token_id?: number | null
           tx_hash?: string
@@ -152,42 +155,119 @@ export type Database = {
           },
         ]
       }
+      quest_submissions: {
+        Row: {
+          created_at: string
+          id: string
+          matched_user_id: string | null
+          quest_id: string
+          raw_payload: Json | null
+          respondent_email: string | null
+          respondent_name: string | null
+          respondent_wallet: string | null
+          status: Database["public"]["Enums"]["submission_status"]
+          submitted_at: string
+          tally_response_id: string | null
+          tally_submission_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          matched_user_id?: string | null
+          quest_id: string
+          raw_payload?: Json | null
+          respondent_email?: string | null
+          respondent_name?: string | null
+          respondent_wallet?: string | null
+          status?: Database["public"]["Enums"]["submission_status"]
+          submitted_at?: string
+          tally_response_id?: string | null
+          tally_submission_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          matched_user_id?: string | null
+          quest_id?: string
+          raw_payload?: Json | null
+          respondent_email?: string | null
+          respondent_name?: string | null
+          respondent_wallet?: string | null
+          status?: Database["public"]["Enums"]["submission_status"]
+          submitted_at?: string
+          tally_response_id?: string | null
+          tally_submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_submissions_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quests: {
         Row: {
           active: boolean
+          auto_approve: boolean
           badge_token_id: number | null
+          cover_image_url: string | null
           created_at: string
           description: string | null
           icon: string | null
           id: string
+          locked: boolean
           metadata_uri: string | null
           points: number
           slug: string
+          tally_form_id: string | null
+          tally_form_url: string | null
           title: string
+          track: string
+          unlock_cohort: number | null
+          week: number
         }
         Insert: {
           active?: boolean
+          auto_approve?: boolean
           badge_token_id?: number | null
+          cover_image_url?: string | null
           created_at?: string
           description?: string | null
           icon?: string | null
           id?: string
+          locked?: boolean
           metadata_uri?: string | null
           points?: number
           slug: string
+          tally_form_id?: string | null
+          tally_form_url?: string | null
           title: string
+          track?: string
+          unlock_cohort?: number | null
+          week?: number
         }
         Update: {
           active?: boolean
+          auto_approve?: boolean
           badge_token_id?: number | null
+          cover_image_url?: string | null
           created_at?: string
           description?: string | null
           icon?: string | null
           id?: string
+          locked?: boolean
           metadata_uri?: string | null
           points?: number
           slug?: string
+          tally_form_id?: string | null
+          tally_form_url?: string | null
           title?: string
+          track?: string
+          unlock_cohort?: number | null
+          week?: number
         }
         Relationships: []
       }
@@ -246,13 +326,11 @@ export type Database = {
     Views: {
       leaderboard_view: {
         Row: {
-          attendance_points: number | null
           avatar_url: string | null
           display_name: string | null
+          last_activity: string | null
           nft_count: number | null
           quest_count: number | null
-          quest_points: number | null
-          session_count: number | null
           total_points: number | null
           user_id: string | null
           wallet_address: string | null
@@ -262,6 +340,13 @@ export type Database = {
     }
     Functions: {
       get_public_stats: { Args: never; Returns: Json }
+      get_quest_signups: {
+        Args: never
+        Returns: {
+          quest_id: string
+          signups: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -274,6 +359,7 @@ export type Database = {
           _chain_id: number
           _contract_address: string
           _metadata_uri: string
+          _owner_address: string
           _quest_id: string
           _token_id: number
           _tx_hash: string
@@ -285,6 +371,7 @@ export type Database = {
           id: string
           metadata_uri: string | null
           minted_at: string
+          owner_address: string | null
           quest_id: string | null
           token_id: number | null
           tx_hash: string
@@ -300,6 +387,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "organizer" | "participant"
+      submission_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -428,6 +516,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "organizer", "participant"],
+      submission_status: ["pending", "approved", "rejected"],
     },
   },
 } as const
