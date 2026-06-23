@@ -146,6 +146,7 @@ function AdminPage() {
           ))}
         </div>
       </div>
+      )}
 
       <p className="text-xs text-muted-foreground">
         Tip: batch on-chain minting can be triggered from your own admin wallet by listing eligible
