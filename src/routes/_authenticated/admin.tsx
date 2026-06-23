@@ -106,6 +106,11 @@ function AdminPage() {
         </div>
       </div>
 
+      {usersError ? (
+        <div className="rounded-2xl border border-destructive/40 bg-destructive/10 p-5 text-sm text-destructive">
+          You don't have permission to view participants. Ask an admin for access.
+        </div>
+      ) : (
       <div className="rounded-2xl border border-border bg-card/70 overflow-hidden">
         <div className="px-5 py-3 border-b border-border flex items-center gap-2">
           <UserCheck className="h-4 w-4" />
