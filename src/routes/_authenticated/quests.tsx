@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +9,7 @@ import { BadgeCard } from "@/components/BadgeCard";
 import { getWalletClient, publicClient } from "@/lib/contract/client";
 import { miniHackAbi } from "@/lib/contract/abi";
 import { CONTRACT_ADDRESS, txUrl } from "@/lib/contract/config";
+import { recordVerifiedMint } from "@/lib/mints.functions";
 
 export const Route = createFileRoute("/_authenticated/quests")({
   head: () => ({ meta: [{ title: "Quests · MiniHack Heroes" }] }),
