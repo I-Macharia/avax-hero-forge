@@ -22,15 +22,13 @@ function useLiveStats() {
   return useQuery({
     queryKey: ["live-stats"],
     queryFn: async () => {
-      const [p, m, q] = await Promise.all([
-        supabase.from("profiles").select("id", { count: "exact", head: true }),
-        supabase.from("nft_mints").select("id", { count: "exact", head: true }),
-        supabase.from("quest_completions").select("id", { count: "exact", head: true }),
-      ]);
+      const { data, error } = await supabase.rpc("get_public_stats");
+      if (error) throw error;
+      const stats = (data ?? {}) as { participants?: number; nfts?: number; quests?: number };
       return {
-        participants: p.count ?? 0,
-        nfts: m.count ?? 0,
-        quests: q.count ?? 0,
+        participants: stats.participants ?? 0,
+        nfts: stats.nfts ?? 0,
+        quests: stats.quests ?? 0,
       };
     },
     refetchInterval: 15_000,
