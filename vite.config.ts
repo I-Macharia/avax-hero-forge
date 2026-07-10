@@ -12,8 +12,4 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Pass Vite-specific config under the `vite` key to avoid unknown-property errors
-  vite: {
-    base: '/avax-hero-forge/',
-  },
 });
