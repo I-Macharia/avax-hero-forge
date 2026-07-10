@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { BadgeCard } from "@/components/BadgeCard";
 
-export const Route = createFileRoute("/_authenticated/leaderboard")({
+export const Route = createFileRoute("/leaderboard")({
   head: () => ({ meta: [{ title: "Leaderboard · MiniHack Heroes" }] }),
   component: LeaderboardPage,
 });
@@ -33,7 +34,7 @@ function LeaderboardPage() {
   const { data } = useQuery({
     queryKey: ["leaderboard"],
     queryFn: async () => {
-      const [boardRes, statsRes, completionsRes] = await Promise.all([
+      const [boardRes, statsRes, completionsRes, recentRes] = await Promise.all([
         supabase
           .from("leaderboard_view")
           .select("*")
@@ -44,9 +45,14 @@ function LeaderboardPage() {
           .from("quest_completions")
           .select("user_id, quest:quests(track)")
           .limit(2000),
+        supabase
+          .from("nft_mints")
+          .select("id, token_id, minted_at, quests(title, icon)")
+          .order("minted_at", { ascending: false })
+          .limit(6),
       ]);
       const stats = (statsRes.data ?? {}) as {
-        participants?: number; completions?: number; quests?: number;
+        participants?: number; completions?: number; quests?: number; nfts?: number;
       };
       // Build per-user track pips from completions
       const pips = new Map<string, string[]>();
@@ -63,8 +69,10 @@ function LeaderboardPage() {
           participants: stats.participants ?? 0,
           completions: stats.completions ?? 0,
           quests: stats.quests ?? 0,
+          badges: stats.nfts ?? 0,
         },
         pips,
+        recentBadges: recentRes.data ?? [],
       };
     },
     refetchInterval: 20_000,
@@ -83,6 +91,53 @@ function LeaderboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
+      <section className="grid gap-5 lg:grid-cols-[1.4fr_0.6fr]">
+        <div className="rounded-2xl border border-border bg-card/60 p-6">
+          <h2 className="text-xl font-semibold">Leaderboard heroes</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Public rankings for all cohorts. The top spot is the current champion.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <Stat label="Quests" value={data?.stats.quests ?? 0} color="text-foreground" />
+            <Stat label="Total completions" value={data?.stats.completions ?? 0} color="text-emerald-400" />
+            <Stat label="Participants" value={data?.stats.participants ?? 0} color="text-primary" />
+            <Stat label="Badges minted" value={data?.stats.badges ?? 0} color="text-violet-400" />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card/60 p-6">
+          <h2 className="text-xl font-semibold">Recent minted badges</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Latest on-chain badge mints from every cohort, visible for everyone.
+          </p>
+          <div className="mt-5 grid gap-3">
+            {data?.recentBadges?.length ? (
+              data.recentBadges.map((mint: any) => (
+                <BadgeCard
+                  key={mint.id}
+                  title={(mint as any).quests?.title ?? `Badge #${mint.token_id}`}
+                  subtitle={
+                    mint.minted_at
+                      ? new Date(mint.minted_at).toLocaleDateString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      : "Minted"
+                  }
+                  icon={(mint as any).quests?.icon ?? "sparkles"}
+                  earned
+                />
+              ))
+            ) : (
+              <div className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">
+                No badge mints found yet.
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <div className="mt-10 relative">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
@@ -106,10 +161,11 @@ function LeaderboardPage() {
         </div>
       </header>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-4">
         <Stat label="Quests" value={data?.stats.quests ?? 0} color="text-foreground" />
         <Stat label="Total quest completions" value={data?.stats.completions ?? 0} color="text-emerald-400" />
         <Stat label="Participants" value={data?.stats.participants ?? 0} color="text-primary" />
+        <Stat label="Badges minted" value={data?.stats.badges ?? 0} color="text-violet-400" />
       </div>
 
       <div className="mt-6 relative">
@@ -117,16 +173,19 @@ function LeaderboardPage() {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by name or email…"
+          placeholder="Search by name or wallet…"
           className="w-full rounded-2xl border border-border bg-card/60 pl-10 pr-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary"
         />
       </div>
 
+      </div>
+
       <div className="mt-6 rounded-2xl border border-border bg-card/60 overflow-hidden">
-        <div className="hidden sm:grid grid-cols-[60px_1fr_1.2fr_80px_110px] gap-3 px-5 py-3 text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+        <div className="hidden sm:grid grid-cols-[60px_1fr_1.2fr_90px_80px_110px] gap-3 px-5 py-3 text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
           <span>Rank</span>
           <span>Builder</span>
           <span>Quests</span>
+          <span className="text-right">Badges</span>
           <span className="text-right">Points</span>
           <span className="text-right">Last activity</span>
         </div>
@@ -140,7 +199,7 @@ function LeaderboardPage() {
           return (
             <div
               key={row.user_id}
-              className={`grid sm:grid-cols-[60px_1fr_1.2fr_80px_110px] gap-3 items-center px-5 py-3 border-b border-border last:border-0 ${rankTint}`}
+              className={`grid sm:grid-cols-[60px_1fr_1.2fr_90px_80px_110px] gap-3 items-center px-5 py-3 border-b border-border last:border-0 ${rankTint}`}
             >
               <span className="text-xs font-semibold text-muted-foreground">#{i + 1}</span>
               <div className="flex items-center gap-3 min-w-0">
@@ -168,6 +227,7 @@ function LeaderboardPage() {
                 )}
                 <span className="ml-1 text-xs text-muted-foreground">{tracks.length}</span>
               </div>
+              <span className="text-sm text-right text-muted-foreground">{row.nft_count ?? 0}</span>
               <span className="text-sm sm:text-right font-bold text-primary">{row.total_points ?? 0}</span>
               <span className="text-xs text-muted-foreground sm:text-right">
                 {relativeTime(row.last_activity)}
