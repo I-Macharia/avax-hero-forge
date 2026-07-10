@@ -1,87 +1,69 @@
 ## Goal
 
-Redesign the Quests and Leaderboard pages to match the uploaded mocks, switch minting to an admin-only flow, and integrate Tally as the source of truth for quest submissions.
+Apply the goals visible at the end of that ChatGPT thread to this project: rename the app to **Avax Hero Forge** and do a focused quality pass — stronger typing, React render perf, accessibility, meaningful docs, more reusable components, and a codebase that survives future cohorts without rewrites. No new features.
 
-## 1. Tally integration (webhook + on-demand sync)
+## 1. Rebrand → Avax Hero Forge
 
-**New tables / columns**
-- `quests`: add `tally_form_id text`, `tally_form_url text`, `week int`, `track text` (Payments / Gaming / Agentic AI), `cover_image_url text`.
-- New table `quest_submissions` — one row per Tally response (separate from `quest_completions` which represents an approved/awarded completion):
-  - `id`, `quest_id`, `tally_submission_id` (unique), `tally_response_id`, `respondent_email`, `respondent_name`, `raw_payload jsonb`, `submitted_at`, `matched_user_id uuid` (nullable, FK to profiles when we can match by email/wallet), `status` enum (`pending` / `approved` / `rejected`), `created_at`.
-- RLS: `authenticated` read-only on `quest_submissions`; service role + admins/organizers write. GRANTs as required.
+- `src/routes/__root.tsx`: update `head()` title/description/og:title/og:description and any hard-coded "MiniHack Heroes" strings.
+- `src/routes/auth.tsx`, `src/components/SiteHeader.tsx`, `src/components/SiteFooter.tsx`, `src/routes/index.tsx`, dashboard/profile/quests/leaderboard/admin route heads: replace user-facing "MiniHack Heroes" with "Avax Hero Forge".
+- `README.md`, `.env.example`, `contracts/README.md`: same rename, plus a one-liner explaining the project vision.
+- Contract stays `MiniHackAchievement` on-chain (already deployed shape); only display name changes.
+- Keep the gradient/logo mark; only wordmark text changes.
 
-**Webhook endpoint** — `src/routes/api/public/tally-webhook.ts`
-- Verifies `tally-signature` HMAC against `TALLY_WEBHOOK_SECRET`.
-- Parses event, upserts `quest_submissions` keyed by `tally_submission_id`.
-- Tries to match `respondent_email` to a `profiles` row → sets `matched_user_id`.
-- Auto-creates a `quest_completions` row (so points flow into the leaderboard) when matched and quest is `auto_approve = true`.
+## 2. Strengthen typing
 
-**On-demand sync** — `src/lib/tally.functions.ts` server fn (admin-only):
-- Hits `https://api.tally.so/forms/{form_id}/submissions` with `TALLY_API_KEY`.
-- Pages through, upserts the same way as the webhook.
-- Surfaced as a "Resync from Tally" button on each admin quest card.
+- Remove `any`/loose casts in `src/lib/tally.functions.ts` (`TallyFieldLike`), `src/lib/admin-mint.functions.ts`, `src/routes/api/public/tally-webhook.ts` — replace with discriminated unions for Tally field values and Zod parses at boundaries.
+- Type `useRoles` return as `app_role[]` (from generated `Database` enum) instead of `string[]`.
+- Tighten server-fn `inputValidator` schemas so callers get inferred argument types instead of `unknown`.
+- Turn on `noUncheckedIndexedAccess` in `tsconfig.json` if it isn't already, and fix the fallout inside touched files only (don't sweep the whole repo in one pass).
 
-Secrets requested in a follow-up turn: `TALLY_WEBHOOK_SECRET`, `TALLY_API_KEY`.
+## 3. React render perf
 
-## 2. Admin-only mint + transfer (Avalanche Fuji)
+- Quests / Leaderboard / Admin pages: memoize derived lists (filter/sort/search) with `useMemo`, extract row components and wrap with `memo` so search typing doesn't re-render every row.
+- Replace inline object/array props in hot lists (`style={{}}`, `onClick={() => ...}`) with stable handlers via `useCallback` where they cross a `memo` boundary.
+- Ensure TanStack Query calls use `queryOptions` + `useSuspenseQuery` in loaders (per project conventions) instead of `useQuery` + `isLoading` spinners on the initial render.
 
-**Contract changes** (`contracts/MiniHackAchievement.sol`)
-- Remove soulbound `_update` override → badges become transferable.
-- Keep `MINTER_ROLE`; add `adminTransfer(from, to, tokenId)` callable by `DEFAULT_ADMIN_ROLE` (uses `_update` bypassing approvals) so admins can reassign a wrongly-sent badge.
-- Add `batchMintTo(address[] tos, uint256 badgeId, string uri)` to mint the same badge to many users in one tx.
-- Bump ABI in `src/lib/contract/abi.ts` and add a fresh test in `contracts/test/`.
+## 4. Accessibility
 
-**Server-side signer**
-- New `src/lib/mint.server.ts` — builds a viem `walletClient` from `privateKeyToAccount(process.env.ADMIN_MINTER_PRIVATE_KEY)` on Fuji. Loaded only inside handlers.
-- New server fns in `src/lib/mints.functions.ts`:
-  - `adminMintBadge({ questId, userIds[] })` — re-checks caller has `admin` or `organizer` role via `has_role`, fetches each user's `wallet_address`, calls `batchMintTo`, waits for receipt, records each mint via `record_verified_mint` RPC.
-  - `adminTransferBadge({ mintId, toAddress })` — admin-only; calls `adminTransfer` on-chain and updates `nft_mints.owner_address`.
-- Both fns short-circuit with a clear "Signer not configured" error when `ADMIN_MINTER_PRIVATE_KEY` is missing.
-- Delete the old client-side `recordVerifiedMint` flow from `src/routes/_authenticated/quests.tsx` (users no longer mint).
+- Auth form: add `<label htmlFor>` for every input, `aria-invalid` on errors, `aria-live="polite"` region for toast fallback text.
+- Site header nav: `<nav aria-label="Primary">`, current route gets `aria-current="page"`.
+- Icon-only buttons (mint, transfer, resync) get `aria-label`.
+- Leaderboard table: real `<table>`/`<thead>`/`<th scope="col">` semantics + `<caption class="sr-only">`.
+- Track pip dots get `role="img" aria-label="Payments quest complete"` etc.
+- Confirm color contrast on track pill colors against the dark bg; adjust tokens in `src/styles.css` only if a pill fails WCAG AA.
 
-## 3. Quests page redesign (`src/routes/_authenticated/quests.tsx`)
+## 5. Documentation that helps future cohorts
 
-Match the screenshot:
-- Header: "See who's tackling quests and where the leaderboard stands." + subhead.
-- Stats strip: Quests count, Total quest completions, Participants (from `get_public_stats`, extended to return per-track stats).
-- Filter chips: All / Payments / Gaming / Agentic AI.
-- 3-column quest card grid (1 col mobile). Each card shows:
-  - Track + Week pill, points pill top-right, cover icon/illustration.
-  - Title, description.
-  - "N signed up" + horizontal avatar stack of matched respondents (from `quest_submissions.matched_user_id`).
-  - Black "Submit quest" CTA → opens the Tally form URL in a new tab.
-  - For locked future weeks: dashed border + "Unlocks in Cohort {n}".
-- Tabs ("Quests" / "Leaderboard") in the top right link to the two routes.
+- Rewrite `README.md`: project vision, architecture diagram (routes / server fns / contract / Tally), local dev, env vars, "how to run a new cohort" checklist (set week/track on quests, register badges, grant MINTER_ROLE, point Tally webhooks).
+- `contracts/README.md`: deploy + `MINTER_ROLE` grant recipe, upgrade notes, badge registry conventions.
+- `AGENTS.md`: keep concise conventions for the next AI/dev contributor (server-fn placement, RLS invariants, no client-side minting).
+- Add short JSDoc to every exported server function (`admin-mint.functions.ts`, `admin.functions.ts`, `tally.functions.ts`) describing auth guard, side effects, and failure modes.
 
-## 4. Leaderboard page redesign (`src/routes/_authenticated/leaderboard.tsx`)
+## 6. Reusable components
 
-Match the second screenshot:
-- Same header + stats strip + tab toggle.
-- Search input ("Search by name or email…").
-- Table: Rank | Builder (avatar + name + email) | Quests (dot pips, one per completed quest, colored per track) | Points | Last Activity (relative time).
-- Top 3 rows get tinted backgrounds (gold/silver/bronze).
-- Source: rewrite `leaderboard_view` to aggregate purely from `quest_completions` joined to `quests.points`, plus `max(completed_at)` for last activity. Drop attendance from the math.
+Extract from the current pages into `src/components/`:
+- `StatsStrip` — the shared header stats used on Quests + Leaderboard.
+- `TrackPill` and `WeekPill` — currently inline in quest cards.
+- `AvatarStack` — respondent avatars on quest cards.
+- `TabToggle` — the Quests/Leaderboard toggle.
+- `EmptyState` — used by admin tabs (no submissions, no completions).
+- `AsyncButton` — button + pending state + toast wiring used across admin mint/transfer/resync.
 
-## 5. Admin panel additions (`src/routes/_authenticated/admin.tsx`)
+Refactor the three pages to consume them; no visual change intended.
 
-- "Tally submissions" tab: pending `quest_submissions` with Approve / Reject / Resync.
-- "Mint" tab: pick a quest → pick users with completions but no mint → "Mint to selected wallets" (calls `adminMintBadge`). Toast with Snowtrace link.
-- "Transfer" tab: paste mint id + new wallet → `adminTransferBadge`.
+## 7. Cleanup / consistency
 
-## 6. Assets
+- Delete stubs that no longer do anything (`src/lib/mints.functions.ts` is a comment-only file — remove and delete its imports).
+- Consolidate contract config (`src/lib/contract/config.ts`, `abi.ts`, `client.ts`) so the address and chain id are read from one place.
+- Verify every `public` table touched still has explicit `GRANT`s and RLS enabled — no schema changes, just an audit note in `.lovable/plan.md`.
 
-- Pull the small badge/track illustrations into `src/assets/quests/` (placeholder SVGs already exist; replace with generated icons matching the mock palette — orange, lime, blue, pink).
+## Out of scope
+
+- No new features, no new tables, no contract redeploy, no Tally re-integration work.
+- No color/typography redesign — this is a code-quality pass, not a visual redesign.
 
 ## Technical notes
 
-- `quest_submissions` and the new tally functions are the only place we touch Tally; everything else reads from our DB.
-- `record_verified_mint` RPC stays but adds an `owner_address` column so admin transfers update it.
-- All `process.env` reads stay inside handler bodies.
-- Migration ordering: schema changes + GRANTs + RLS first → then redeploy contract → then set `VITE_CONTRACT_ADDRESS` + `ADMIN_MINTER_PRIVATE_KEY`.
-- Quietly fix the SSR hydration error on the quests page while rewriting it (likely caused by `Date`/random in render).
-
-## Follow-ups you'll handle
-
-1. Add secrets `TALLY_WEBHOOK_SECRET`, `TALLY_API_KEY`, `ADMIN_MINTER_PRIVATE_KEY` when prompted next turn.
-2. Redeploy the updated `MiniHackAchievement` contract on Fuji, grant `MINTER_ROLE` to the signer address, update `VITE_CONTRACT_ADDRESS`.
-3. In Tally, point each form's webhook at `https://project--7c53adf8-58f2-410e-8630-2545e74325a0-dev.lovable.app/api/public/tally-webhook` (or the published URL once live).
+- All work is frontend + docs + typing; no migrations, no new secrets.
+- After the rename, do a repo grep for "MiniHack Heroes" to catch any missed string; leave on-chain identifiers untouched.
+- Verify with `tsgo` after the typing pass and a quick Playwright smoke of `/`, `/auth`, `/quests`, `/leaderboard` to confirm no regressions.
