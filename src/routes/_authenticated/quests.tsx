@@ -7,7 +7,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/quests")({
-  head: () => ({ meta: [{ title: "Quests · MiniHack Heroes" }] }),
+  head: () => ({ meta: [{ title: "Quests · Avax Hero Forge" }] }),
   component: QuestsPage,
 });
 

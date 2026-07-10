@@ -1,4 +1,4 @@
-# Team1 MiniHack Heroes 🏔️
+# Team1 Avax Hero Forge 🏔️
 
 A gamification platform for the **Avalanche Team1 Africa Mini Hack** cohort. Heroes earn on-chain soulbound NFT badges for attending sessions, completing quests, and climbing the leaderboard.
 

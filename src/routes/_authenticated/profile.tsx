@@ -12,7 +12,7 @@ import { shortAddress, txUrl, CONTRACT_ADDRESS } from "@/lib/contract/config";
 import NFTGallery from "@/components/NFTGallery";
 
 export const Route = createFileRoute("/_authenticated/profile")({
-  head: () => ({ meta: [{ title: "Profile · MiniHack Heroes" }] }),
+  head: () => ({ meta: [{ title: "Profile · Avax Hero Forge" }] }),
   component: ProfilePage,
 });
 

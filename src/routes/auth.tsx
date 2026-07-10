@@ -7,7 +7,7 @@ import { lovable } from "@/integrations/lovable";
 import { useSession } from "@/hooks/useSession";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in · MiniHack Heroes" }] }),
+  head: () => ({ meta: [{ title: "Sign in · Avax Hero Forge" }] }),
   component: AuthPage,
 });
 

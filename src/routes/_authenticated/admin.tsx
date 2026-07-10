@@ -11,7 +11,7 @@ import { resyncTallyQuest } from "@/lib/tally.functions";
 import { txUrl } from "@/lib/contract/config";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin · MiniHack Heroes" }] }),
+  head: () => ({ meta: [{ title: "Admin · Avax Hero Forge" }] }),
   component: AdminPage,
 });
 

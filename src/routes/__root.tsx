@@ -63,10 +63,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Team1 MiniHack Heroes" },
+      { title: "Team1 Avax Hero Forge" },
       { name: "description", content: "Earn on-chain NFT badges at the Avalanche Team1 Africa Mini Hack." },
       { name: "theme-color", content: "#E84142" },
-      { property: "og:title", content: "Team1 MiniHack Heroes" },
+      { property: "og:title", content: "Team1 Avax Hero Forge" },
       { property: "og:description", content: "Gamified Avalanche MiniHack: attend, quest, mint." },
       { property: "og:type", content: "website" },
     ],
