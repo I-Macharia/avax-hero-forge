@@ -11,8 +11,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Team1 Avax Hero Forge — Avalanche Africa" },
       { name: "description", content: "Attend sessions, complete quests, and mint soulbound NFT badges on Avalanche." },
-      { property: "og:title", content: "Team1 Avax Hero Forge" },
-      { property: "og:description", content: "Gamified Avalanche MiniHack — Nairobi & remote." },
+      { property: "og:title", content: "Team1 Avax Hero Forge — Avalanche Africa" },
+      { property: "og:description", content: "Attend sessions, complete quests, and mint soulbound NFT badges on Avalanche." },
     ],
   }),
   component: Landing,
