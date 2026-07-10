@@ -1,39 +1,55 @@
-import React, { useEffect, useState } from "react";
-import { fetchAllNFTs } from "@/integrations/thirdweb/nftService";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { BadgeCard } from "@/components/BadgeCard";
 
-const CONTRACT_ADDRESS = (import.meta.env?.VITE_CONTRACT_ADDRESS as string) || process.env.REACT_APP_CONTRACT_ADDRESS || "";
+type Props = {
+  /** Optional wallet address filter (owner of the badge). */
+  owner?: string;
+  /** Optional contract address filter — matches nft_mints.contract_address. */
+  contractAddress?: string;
+};
 
-export default function NFTGallery({ contractAddress, owner }: { contractAddress?: string; owner?: string }) {
-  const [nfts, setNfts] = useState<any[] | null>(null);
-  const addr = contractAddress ?? CONTRACT_ADDRESS;
+/**
+ * Reads minted badges straight from the app database (`nft_mints`) so we never
+ * depend on a third-party chain-indexing SDK in the client bundle.
+ */
+export default function NFTGallery({ owner, contractAddress }: Props) {
+  const { data: nfts, isLoading } = useQuery({
+    queryKey: ["nft-mints", owner ?? "all", contractAddress ?? "all"],
+    queryFn: async () => {
+      let q = supabase
+        .from("nft_mints")
+        .select("id, token_id, metadata_uri, contract_address, owner_address, quest_id, quests(title, description)")
+        .order("id", { ascending: false });
+      if (owner) q = q.eq("owner_address", owner);
+      if (contractAddress) q = q.eq("contract_address", contractAddress);
+      const { data, error } = await q;
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 
-  useEffect(() => {
-  if (!addr) return;
-  let mounted = true;
-  fetchAllNFTs(addr, owner).then((res) => {
-      if (mounted) setNfts(res || []);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, [addr]);
-
-  if (!addr) return <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">Contract not configured</div>;
-  if (nfts === null) return <div className="p-6 text-center text-muted-foreground">Loading NFTs…</div>;
-  if (nfts.length === 0) return <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No NFTs found</div>;
+  if (isLoading) {
+    return <div className="p-6 text-center text-muted-foreground">Loading badges…</div>;
+  }
+  if (!nfts || nfts.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
+        No badges minted yet
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {nfts.map((n: any, i: number) => {
-        const meta = n?.metadata ?? n;
-        const id = meta?.id ?? meta?.id?.toString?.() ?? i;
+      {nfts.map((n) => {
+        const quest = Array.isArray(n.quests) ? n.quests[0] : n.quests;
         return (
           <BadgeCard
-            key={id}
-            title={meta?.name ?? `Token ${id}`}
-            subtitle={meta?.description ?? undefined}
-            icon={meta?.icon ?? "sparkles"}
+            key={n.id}
+            title={quest?.title ?? `Badge #${n.token_id ?? n.id}`}
+            subtitle={quest?.description ?? undefined}
+            icon="sparkles"
             earned
           />
         );
