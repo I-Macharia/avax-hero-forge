@@ -98,24 +98,36 @@ function AuthPage() {
 
         <form onSubmit={handleEmail} className="space-y-3">
           {mode === "signup" && (
+            <div>
+              <label htmlFor="auth-name" className="sr-only">Display name</label>
+              <input
+                id="auth-name"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Display name"
+                autoComplete="name"
+                className="w-full rounded-lg bg-input/50 border border-border px-3 py-2.5 focus:outline-none focus:border-primary"
+              />
+            </div>
+          )}
+          <div>
+            <label htmlFor="auth-email" className="sr-only">Email</label>
             <input
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Display name"
+              id="auth-email" required type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com" autoComplete="email"
               className="w-full rounded-lg bg-input/50 border border-border px-3 py-2.5 focus:outline-none focus:border-primary"
             />
-          )}
-          <input
-            required type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full rounded-lg bg-input/50 border border-border px-3 py-2.5 focus:outline-none focus:border-primary"
-          />
-          <input
-            required type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password" minLength={6}
-            className="w-full rounded-lg bg-input/50 border border-border px-3 py-2.5 focus:outline-none focus:border-primary"
-          />
+          </div>
+          <div>
+            <label htmlFor="auth-password" className="sr-only">Password</label>
+            <input
+              id="auth-password" required type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password" minLength={6}
+              autoComplete={mode === "signin" ? "current-password" : "new-password"}
+              className="w-full rounded-lg bg-input/50 border border-border px-3 py-2.5 focus:outline-none focus:border-primary"
+            />
+          </div>
           <button
             type="submit" disabled={loading}
             className="w-full rounded-lg bg-gradient-to-r from-primary to-accent px-4 py-2.5 font-semibold text-white glow-ring disabled:opacity-50"
