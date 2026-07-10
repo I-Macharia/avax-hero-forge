@@ -9,9 +9,9 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Team1 MiniHack Heroes — Avalanche Africa" },
+      { title: "Team1 Avax Hero Forge — Avalanche Africa" },
       { name: "description", content: "Attend sessions, complete quests, and mint soulbound NFT badges on Avalanche." },
-      { property: "og:title", content: "Team1 MiniHack Heroes" },
+      { property: "og:title", content: "Team1 Avax Hero Forge" },
       { property: "og:description", content: "Gamified Avalanche MiniHack — Nairobi & remote." },
     ],
   }),

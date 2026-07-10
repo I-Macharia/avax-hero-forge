@@ -10,7 +10,7 @@ import { txUrl } from "@/lib/contract/config";
 import NFTGallery from "@/components/NFTGallery";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard · MiniHack Heroes" }] }),
+  head: () => ({ meta: [{ title: "Dashboard · Avax Hero Forge" }] }),
   component: Dashboard,
 });
 

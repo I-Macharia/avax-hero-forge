@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BadgeCard } from "@/components/BadgeCard";
 
 export const Route = createFileRoute("/leaderboard")({
-  head: () => ({ meta: [{ title: "Leaderboard · MiniHack Heroes" }] }),
+  head: () => ({ meta: [{ title: "Leaderboard · Avax Hero Forge" }] }),
   component: LeaderboardPage,
 });
 
