@@ -23,10 +23,10 @@ export function SiteHeader() {
           <span className="grid place-items-center h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-accent glow-ring">
             <Mountain className="h-4 w-4 text-white" />
           </span>
-          <span className="hidden sm:inline">MiniHack <span className="gradient-text">Heroes</span></span>
+          <span className="hidden sm:inline">Avax <span className="gradient-text">Hero Forge</span></span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1">
+        <nav aria-label="Primary" className="hidden md:flex items-center gap-1">
           {nav.map((n) => {
             if (n.auth && !user) return null;
             const active = path === n.to;
@@ -34,6 +34,7 @@ export function SiteHeader() {
               <Link
                 key={n.to}
                 to={n.to}
+                aria-current={active ? "page" : undefined}
                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
@@ -45,6 +46,7 @@ export function SiteHeader() {
           {user && isOrganizer && (
             <Link
               to="/admin"
+              aria-current={path === "/admin" ? "page" : undefined}
               className={`px-3 py-1.5 rounded-md text-sm font-medium ${
                 path === "/admin" ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-foreground"
               }`}
