@@ -13,7 +13,10 @@ async function assertOrganizer(supabase: any, userId: string) {
   return { isAdmin: !!isAdmin };
 }
 
-// --- Mint a badge to a list of user wallets (admin-only) ---
+// --- Mint a badge to a list of user wallets (admin-only, bulk / override path) ---
+// Note: participants normally self-claim via src/lib/claim.functions.ts. This
+// stays available for organizers to backfill mints (e.g. offline approvals)
+// or to award the leaderboard badges (18/19/20) to top finishers.
 const mintInput = z.object({
   questId: z.string().uuid(),
   userIds: z.array(z.string().uuid()).min(1).max(100),
@@ -41,6 +44,7 @@ export const adminMintBadge = createServerFn({ method: "POST" })
       .eq("id", data.questId)
       .maybeSingle();
     if (qErr || !quest) throw new Error("Quest not found");
+    if (quest.badge_token_id == null) throw new Error("Quest has no badge configured");
 
     // load target wallets, dedupe, skip already-minted users
     const { data: profiles } = await supabaseAdmin
@@ -71,16 +75,17 @@ export const adminMintBadge = createServerFn({ method: "POST" })
         { onConflict: "user_id,quest_id", ignoreDuplicates: true },
       );
 
-    const badgeId = BigInt(quest.badge_token_id ?? 0);
-    const uri = quest.metadata_uri ?? `ipfs://placeholder/${quest.id}.json`;
+    const badgeId = BigInt(quest.badge_token_id);
+    const uri = quest.metadata_uri ?? "";
 
-    // Simulate + send batch tx
+    // Simulate + send batch tx — badgeId only; URI comes from the on-chain
+    // registry (registerBadge), matching the deployed contract's signature.
     const { request } = await publicClient.simulateContract({
       account,
       address: contract,
       abi: miniHackAbi,
       functionName: "batchMintTo",
-      args: [targets.map((t) => t.address), badgeId, uri],
+      args: [targets.map((t) => t.address), badgeId],
     });
     const hash = await wallet.writeContract(request);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
@@ -122,6 +127,10 @@ export const adminMintBadge = createServerFn({ method: "POST" })
   });
 
 // --- Transfer a previously-minted badge to another wallet (admin-only) ---
+// Only works for transferable (non-soulbound) badges on-chain — the contract
+// itself enforces this via adminTransfer's soulbound bypass, which admins can
+// use for leaderboard badges (18-20) but which quest badges (1-17) reject
+// unless you intend a genuine correction.
 const transferInput = z.object({
   mintId: z.string().uuid(),
   toAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/),

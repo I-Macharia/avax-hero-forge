@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BadgeCard } from "@/components/BadgeCard";
 
@@ -47,7 +47,7 @@ function LeaderboardPage() {
           .limit(2000),
         supabase
           .from("nft_mints")
-          .select("id, token_id, minted_at, quests(title, icon)")
+          .select("id, token_id, minted_at, quests(title, icon, cover_image_url)")
           .order("minted_at", { ascending: false })
           .limit(6),
       ]);
@@ -93,9 +93,11 @@ function LeaderboardPage() {
     <div className="mx-auto max-w-7xl px-4 py-10">
       <section className="grid gap-5 lg:grid-cols-[1.4fr_0.6fr]">
         <div className="rounded-2xl border border-border bg-card/60 p-6">
-          <h2 className="text-xl font-semibold">Leaderboard heroes</h2>
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            <Crown className="h-5 w-5 text-amber-400" /> Leaderboard heroes
+          </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Public rankings for all cohorts. The top spot is the current champion.
+            Public rankings for all cohorts. The top spot is crowned King of the Premier Cohort.
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <Stat label="Quests" value={data?.stats.quests ?? 0} color="text-foreground" />
@@ -115,7 +117,7 @@ function LeaderboardPage() {
               data.recentBadges.map((mint: any) => (
                 <BadgeCard
                   key={mint.id}
-                  title={(mint as any).quests?.title ?? `Badge #${mint.token_id}`}
+                  title={mint.quests?.title ?? `Badge #${mint.token_id}`}
                   subtitle={
                     mint.minted_at
                       ? new Date(mint.minted_at).toLocaleDateString(undefined, {
@@ -124,7 +126,8 @@ function LeaderboardPage() {
                         })
                       : "Minted"
                   }
-                  icon={(mint as any).quests?.icon ?? "sparkles"}
+                  icon={mint.quests?.icon ?? "sparkles"}
+                  imageUrl={mint.quests?.cover_image_url}
                   earned
                 />
               ))
@@ -201,7 +204,9 @@ function LeaderboardPage() {
               key={row.user_id}
               className={`grid sm:grid-cols-[60px_1fr_1.2fr_90px_80px_110px] gap-3 items-center px-5 py-3 border-b border-border last:border-0 ${rankTint}`}
             >
-              <span className="text-xs font-semibold text-muted-foreground">#{i + 1}</span>
+              <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+                {i === 0 && <Crown className="h-3.5 w-3.5 text-amber-400" />}#{i + 1}
+              </span>
               <div className="flex items-center gap-3 min-w-0">
                 {row.avatar_url ? (
                   <img src={row.avatar_url} alt="" className="h-8 w-8 rounded-full object-cover" />
@@ -211,7 +216,14 @@ function LeaderboardPage() {
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{row.display_name ?? "Anonymous"}</p>
+                  <p className="text-sm font-medium truncate flex items-center gap-1.5">
+                    {row.display_name ?? "Anonymous"}
+                    {i === 0 && (
+                      <span className="rounded-full bg-amber-500/15 text-amber-400 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5">
+                        Cohort King
+                      </span>
+                    )}
+                  </p>
                   <p className="text-[11px] text-muted-foreground truncate">
                     {row.wallet_address ? `${row.wallet_address.slice(0, 6)}…${row.wallet_address.slice(-4)}` : "no wallet"}
                   </p>

@@ -11,8 +11,10 @@ import { useSession } from "@/hooks/useSession";
 import { claimBadge } from "@/lib/claim.functions";
 import { resolveArtworkUrl } from "@/components/BadgeCard";
 
-export const Route = createFileRoute("/_authenticated/quests")({
-  head: () => ({ meta: [{ title: "Quests · Avax Hero Forge" }] }),
+// Duplicate route file preserved for reference. The authenticated route is defined
+// in src/routes/_authenticated/quests.tsx and provides the actual /quests path.
+const Route = createFileRoute("/quests")({
+  head: () => ({ meta: [{ title: "Quests · MiniHack Heroes" }] }),
   component: QuestsPage,
 });
 

@@ -9,8 +9,10 @@ import { BadgeCard } from "@/components/BadgeCard";
 import { txUrl } from "@/lib/contract/config";
 import NFTGallery from "@/components/NFTGallery";
 
-export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard · Avax Hero Forge" }] }),
+// Duplicate route file preserved for reference. The authenticated route is defined
+// in src/routes/_authenticated/dashboard.tsx and provides the actual /dashboard path.
+const Route = createFileRoute("/dashboard")({
+  head: () => ({ meta: [{ title: "Dashboard · MiniHack Heroes" }] }),
   component: Dashboard,
 });
 
