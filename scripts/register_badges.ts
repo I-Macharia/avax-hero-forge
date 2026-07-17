@@ -21,9 +21,12 @@ import { createPublicClient, createWalletClient, http, parseAbi } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { avalancheFuji } from "viem/chains";
 import { readFileSync } from "fs";
-import * as dotenv from "dotenv";
 
-dotenv.config();
+if (typeof process !== "undefined" && process.env) {
+  // Load .env in Node.js environment
+  const dotenv = require("dotenv");
+  dotenv.config();
+}
 
 const CONTRACT_ADDRESS = process.env.VITE_CONTRACT_ADDRESS as `0x${string}` | undefined;
 const PRIVATE_KEY = process.env.PRIVATE_KEY as `0x${string}` | undefined;
@@ -49,7 +52,7 @@ async function main(): Promise<void> {
     readFileSync("badge_uris.json", "utf-8"),
   );
 
-  const account = privateKeyToAccount(PRIVATE_KEY);
+  const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
 
   const publicClient = createPublicClient({
     chain: avalancheFuji,
@@ -69,7 +72,7 @@ async function main(): Promise<void> {
     const { badgeId, name, metadataUri, isSoulbound } = badge;
 
     const config = await publicClient.readContract({
-      address: CONTRACT_ADDRESS,
+      address: CONTRACT_ADDRESS as `0x${string}`,
       abi,
       functionName: "badgeConfigs",
       args: [BigInt(badgeId)],
@@ -82,7 +85,7 @@ async function main(): Promise<void> {
 
     process.stdout.write(`[${String(badgeId).padStart(2, "0")}] Registering: ${name} ... `);
     const hash = await walletClient.writeContract({
-      address: CONTRACT_ADDRESS,
+      address: CONTRACT_ADDRESS as `0x${string}`,
       abi,
       functionName: "registerBadge",
       args: [BigInt(badgeId), metadataUri, isSoulbound],

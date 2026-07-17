@@ -25,9 +25,9 @@ import json
 import time
 import requests
 from pathlib import Path
-from dotenv import load_dotenv
+import dotenv
 
-load_dotenv()
+dotenv.load_dotenv()
 
 PINATA_JWT = os.environ["PINATA_JWT"]
 BADGES_DIR = Path("stitch_avax_hero_quest_design")

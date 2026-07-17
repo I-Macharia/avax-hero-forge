@@ -1,11 +1,13 @@
-// Self-serve badge claim: a participant who has completed a quest can claim
-// their badge directly. The server's admin-minter wallet pays gas and signs
-// the mint (server-sponsored), so participants never need AVAX or a
-// browser wallet extension to claim.
+// Sponsored self-serve badge claim. A completed quest is first attested on
+// chain, then claimed through the contract's explicitly scoped relayer path.
+// The server pays gas but can only mint the attested badge to the participant's
+// own saved wallet — never to the signer or an arbitrary destination.
 //
-// Eligibility is enforced twice:
+// Eligibility is enforced three times:
 //   1. Here, before we ever touch the chain (fast fail, no wasted gas).
-//   2. Inside record_verified_mint (SECURITY DEFINER SQL function), which
+//   2. On chain, through an ORGANIZER_ROLE eligibility attestation consumed by
+//      claimBadgeFor.
+//   3. Inside record_verified_mint (SECURITY DEFINER SQL function), which
 //      re-checks quest_completions as a defense-in-depth backstop.
 //
 // Idempotent: if the user already claimed this quest's badge, we return the
@@ -77,7 +79,9 @@ export const claimBadge = createServerFn({ method: "POST" })
     }
     const to = getAddress(profile.wallet_address);
 
-    // 5. Mint via the server-sponsored admin minter.
+    // 5. Attest the approved completion, if it has not already been attested.
+    // This makes eligibility auditable and keeps the actual mint behind the
+    // contract's claimBadgeFor relay constraint.
     const { getAdminMinter, getServerPublicClient, getContractAddress, CHAIN_ID } =
       await import("@/lib/mint.server");
     const contract = getContractAddress();
@@ -85,12 +89,31 @@ export const claimBadge = createServerFn({ method: "POST" })
     const publicClient = getServerPublicClient();
     const badgeId = BigInt(quest.badge_token_id);
 
+    const eligibleOnChain = await publicClient.readContract({
+      address: contract,
+      abi: miniHackAbi,
+      functionName: "isEligible",
+      args: [badgeId, to],
+    });
+    if (!eligibleOnChain) {
+      const { request: attestRequest } = await publicClient.simulateContract({
+        account,
+        address: contract,
+        abi: miniHackAbi,
+        functionName: "attestEligibility",
+        args: [badgeId, to],
+      });
+      const attestHash = await wallet.writeContract(attestRequest);
+      const attestReceipt = await publicClient.waitForTransactionReceipt({ hash: attestHash });
+      if (attestReceipt.status !== "success") throw new Error("Eligibility attestation reverted");
+    }
+
     const { request } = await publicClient.simulateContract({
       account,
       address: contract,
       abi: miniHackAbi,
-      functionName: "mintTo",
-      args: [to, badgeId],
+      functionName: "claimBadgeFor",
+      args: [badgeId, to],
     });
     const hash = await wallet.writeContract(request);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
@@ -98,7 +121,7 @@ export const claimBadge = createServerFn({ method: "POST" })
 
     const logs = parseEventLogs({
       abi: miniHackAbi,
-      eventName: "BadgeMinted",
+      eventName: "BadgeClaimed",
       logs: receipt.logs,
     });
     const tokenId = logs[0] ? Number((logs[0].args as { tokenId?: bigint }).tokenId ?? 0) : null;

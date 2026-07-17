@@ -2,7 +2,7 @@
 // Source: /contracts/MiniHackAchievement.sol — regenerate after any contract change.
 //
 // IMPORTANT: mintTo/batchMintTo take NO uri argument — the contract pulls each
-// badge's URI from the on-chain registry (see registerBadge / badgeConfigs).
+// badge's URI from the on-chain registry (see registerBadge / getBadgeConfig).
 // A previous version of this ABI incorrectly included a uri param on these
 // functions, which would have caused every mint tx to revert or fail to encode.
 export const miniHackAbi = [
@@ -39,21 +39,74 @@ export const miniHackAbi = [
   },
   {
     type: "function",
-    name: "badgeConfigs",
+    name: "getBadgeConfig",
     stateMutability: "view",
-    inputs: [{ name: "", type: "uint256" }],
+    inputs: [{ name: "badgeId", type: "uint256" }],
     outputs: [
       { name: "uri", type: "string" },
       { name: "isSoulbound", type: "bool" },
-      { name: "registered", type: "bool" },
     ],
   },
   {
     type: "function",
-    name: "isSoulbound",
+    name: "isBadgeRegistered",
     stateMutability: "view",
     inputs: [{ name: "badgeId", type: "uint256" }],
     outputs: [{ type: "bool" }],
+  },
+  {
+    type: "function",
+    name: "attestEligibility",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "badgeId", type: "uint256" },
+      { name: "participant", type: "address" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "isEligible",
+    stateMutability: "view",
+    inputs: [
+      { name: "badgeId", type: "uint256" },
+      { name: "participant", type: "address" },
+    ],
+    outputs: [{ type: "bool" }],
+  },
+  {
+    type: "function",
+    name: "claimBadge",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "badgeId", type: "uint256" }],
+    outputs: [{ name: "tokenId", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "claimBadgeFor",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "badgeId", type: "uint256" },
+      { name: "participant", type: "address" },
+    ],
+    outputs: [{ name: "tokenId", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "tierOf",
+    stateMutability: "view",
+    inputs: [{ name: "participant", type: "address" }],
+    outputs: [{ type: "uint8" }],
+  },
+  {
+    type: "function",
+    name: "claimedTokenId",
+    stateMutability: "view",
+    inputs: [
+      { name: "badgeId", type: "uint256" },
+      { name: "participant", type: "address" },
+    ],
+    outputs: [{ type: "uint256" }],
   },
   {
     type: "function",
@@ -117,6 +170,16 @@ export const miniHackAbi = [
       { indexed: true, name: "badgeId", type: "uint256" },
       { indexed: false, name: "uri", type: "string" },
       { indexed: false, name: "isSoulbound", type: "bool" },
+    ],
+  },
+  {
+    type: "event",
+    name: "BadgeClaimed",
+    inputs: [
+      { indexed: true, name: "participant", type: "address" },
+      { indexed: true, name: "tokenId", type: "uint256" },
+      { indexed: true, name: "badgeId", type: "uint256" },
+      { indexed: false, name: "relayedBy", type: "address" },
     ],
   },
 ] as const;
