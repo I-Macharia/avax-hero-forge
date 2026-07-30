@@ -12,7 +12,17 @@ import { shortAddress, txUrl, CONTRACT_ADDRESS } from "@/lib/contract/config";
 import NFTGallery from "@/components/NFTGallery";
 
 export const Route = createFileRoute("/_authenticated/profile")({
-  head: () => ({ meta: [{ title: "Profile · Avax Hero Forge" }] }),
+  head: () => ({
+    meta: [
+      { title: "Profile · Avax Hero Forge" },
+      {
+        name: "description",
+        content:
+          "Manage your MiniHack profile, link the Avalanche wallet that receives your badges, and browse your on-chain NFT collection.",
+      },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: ProfilePage,
 });
 

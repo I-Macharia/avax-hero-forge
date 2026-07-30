@@ -12,7 +12,17 @@ import { claimBadge } from "@/lib/claim.functions";
 import { resolveArtworkUrl } from "@/components/BadgeCard";
 
 export const Route = createFileRoute("/_authenticated/quests")({
-  head: () => ({ meta: [{ title: "Quests · Avax Hero Forge" }] }),
+  head: () => ({
+    meta: [
+      { title: "Quests · Avax Hero Forge" },
+      {
+        name: "description",
+        content:
+          "Browse MiniHack quests across the Payments, Gaming, and Agentic AI tracks, submit your build, and unlock soulbound Avalanche badges.",
+      },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: QuestsPage,
 });
 
