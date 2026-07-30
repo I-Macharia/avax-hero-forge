@@ -283,7 +283,7 @@ function QuestCard({
         )}
 
         <div>
-          <h3 className="text-base font-semibold leading-snug">{quest.title}</h3>
+          <h2 className="text-base font-semibold leading-snug">{quest.title}</h2>
           {quest.description && (
             <p className="mt-1.5 text-sm text-muted-foreground line-clamp-3">{quest.description}</p>
           )}

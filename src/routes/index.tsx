@@ -179,7 +179,7 @@ function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: stri
       <div className="grid place-items-center h-11 w-11 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 text-primary">
         {icon}
       </div>
-      <h3 className="mt-4 text-lg font-semibold">{title}</h3>
+      <h2 className="mt-4 text-lg font-semibold">{title}</h2>
       <p className="mt-2 text-sm text-muted-foreground">{body}</p>
     </motion.div>
   );
