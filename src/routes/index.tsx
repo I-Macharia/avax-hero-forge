@@ -68,45 +68,25 @@ function Landing() {
       <SiteHeader />
 
       <main className="flex-1">
-        {/* Hero */}
+        {/* Hero — rendered without JS-driven animation so the LCP text paints immediately */}
         <section className="mx-auto max-w-7xl px-4 pt-16 pb-24 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs font-medium"
-          >
+          <div className="hero-rise inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs font-medium">
             <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
             Avalanche Fuji · Cohort live in Nairobi
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.05 }}
-            className="mt-6 text-5xl sm:text-7xl font-bold tracking-tight"
-          >
+          <h1 className="hero-rise mt-6 text-5xl sm:text-7xl font-bold tracking-tight">
             Team1 <span className="gradient-text">MiniHack</span>
             <br />
             Heroes
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
-          >
+          <p className="hero-rise mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
             Show up. Ship quests. Mint soulbound on-chain badges that prove you built on
             Avalanche. Climb the leaderboard. Become a Hero.
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-10 flex flex-wrap justify-center gap-3"
-          >
+          <div className="hero-rise mt-10 flex flex-wrap justify-center gap-3">
             <Link
               to="/auth"
               className="rounded-xl bg-gradient-to-r from-primary to-accent px-7 py-3.5 font-semibold text-white glow-ring hover:scale-[1.02] transition-transform"
@@ -119,7 +99,8 @@ function Landing() {
             >
               View leaderboard
             </Link>
-          </motion.div>
+          </div>
+
 
           {/* Live stats */}
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-1 sm:grid-cols-3 gap-4">
