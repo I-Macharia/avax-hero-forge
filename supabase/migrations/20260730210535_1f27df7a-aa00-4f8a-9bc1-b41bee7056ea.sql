@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.record_verified_mint(uuid, uuid, text, text, integer, integer, text, text) FROM anon, authenticated, public;
