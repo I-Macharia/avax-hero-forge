@@ -6,8 +6,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useSession } from "@/hooks/useSession";
 
+const AUTH_URL = "https://mini-hack-heroes.lovable.app/auth";
+const AUTH_TITLE = "Sign In — Join the Team1 Africa MiniHack";
+const AUTH_DESCRIPTION =
+  "Sign in with email or Google to join the MiniHack cohort, track your quest progress, and claim soulbound Avalanche badges.";
+
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in · Avax Hero Forge" }] }),
+  head: () => ({
+    meta: [
+      { title: AUTH_TITLE },
+      { name: "description", content: AUTH_DESCRIPTION },
+      { property: "og:title", content: AUTH_TITLE },
+      { property: "og:description", content: AUTH_DESCRIPTION },
+      { property: "og:url", content: AUTH_URL },
+    ],
+    links: [{ rel: "canonical", href: AUTH_URL }],
+  }),
   component: AuthPage,
 });
 

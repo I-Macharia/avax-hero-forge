@@ -6,13 +6,39 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
+const HOME_URL = "https://mini-hack-heroes.lovable.app/";
+const HOME_TITLE = "Team1 MiniHack Heroes — Earn Avalanche NFT Badges";
+const HOME_DESCRIPTION =
+  "Join the Team1 Africa MiniHack in Nairobi: ship quests, climb the leaderboard, and mint soulbound NFT badges on Avalanche that prove what you built.";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Team1 Avax Hero Forge — Avalanche Africa" },
-      { name: "description", content: "Attend sessions, complete quests, and mint soulbound NFT badges on Avalanche." },
-      { property: "og:title", content: "Team1 Avax Hero Forge — Avalanche Africa" },
-      { property: "og:description", content: "Attend sessions, complete quests, and mint soulbound NFT badges on Avalanche." },
+      { title: HOME_TITLE },
+      { name: "description", content: HOME_DESCRIPTION },
+      { property: "og:title", content: HOME_TITLE },
+      { property: "og:description", content: HOME_DESCRIPTION },
+      { property: "og:url", content: HOME_URL },
+    ],
+    links: [{ rel: "canonical", href: HOME_URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Event",
+          name: "Team1 Africa MiniHack",
+          description: HOME_DESCRIPTION,
+          eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
+          eventStatus: "https://schema.org/EventScheduled",
+          location: [
+            { "@type": "Place", name: "Nairobi, Kenya", address: "Nairobi, Kenya" },
+            { "@type": "VirtualLocation", url: HOME_URL },
+          ],
+          organizer: { "@type": "Organization", name: "Avalanche Africa", url: HOME_URL },
+          url: HOME_URL,
+೦        }),
+      },
     ],
   }),
   component: Landing,

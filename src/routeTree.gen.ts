@@ -13,10 +13,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedQuestsRouteImport } from './routes/_authenticated/quests'
+import { Route as GuidesWhatAreSoulboundTokensRouteImport } from './routes/guides.what-are-soulbound-tokens'
 import { Route as ApiPublicTallyWebhookRouteImport } from './routes/api/public/tally-webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -36,6 +38,11 @@ const AuthRoute = AuthRouteImport.update({
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -58,6 +65,12 @@ const AuthenticatedQuestsRoute = AuthenticatedQuestsRouteImport.update({
   path: '/quests',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const GuidesWhatAreSoulboundTokensRoute =
+  GuidesWhatAreSoulboundTokensRouteImport.update({
+    id: '/guides/what-are-soulbound-tokens',
+    path: '/guides/what-are-soulbound-tokens',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicTallyWebhookRoute = ApiPublicTallyWebhookRouteImport.update({
   id: '/api/public/tally-webhook',
   path: '/api/public/tally-webhook',
@@ -68,20 +81,24 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/quests': typeof AuthenticatedQuestsRoute
+  '/guides/what-are-soulbound-tokens': typeof GuidesWhatAreSoulboundTokensRoute
   '/api/public/tally-webhook': typeof ApiPublicTallyWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/quests': typeof AuthenticatedQuestsRoute
+  '/guides/what-are-soulbound-tokens': typeof GuidesWhatAreSoulboundTokensRoute
   '/api/public/tally-webhook': typeof ApiPublicTallyWebhookRoute
 }
 export interface FileRoutesById {
@@ -90,10 +107,12 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/quests': typeof AuthenticatedQuestsRoute
+  '/guides/what-are-soulbound-tokens': typeof GuidesWhatAreSoulboundTokensRoute
   '/api/public/tally-webhook': typeof ApiPublicTallyWebhookRoute
 }
 export interface FileRouteTypes {
@@ -102,20 +121,24 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/leaderboard'
+    | '/sitemap.xml'
     | '/admin'
     | '/dashboard'
     | '/profile'
     | '/quests'
+    | '/guides/what-are-soulbound-tokens'
     | '/api/public/tally-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/leaderboard'
+    | '/sitemap.xml'
     | '/admin'
     | '/dashboard'
     | '/profile'
     | '/quests'
+    | '/guides/what-are-soulbound-tokens'
     | '/api/public/tally-webhook'
   id:
     | '__root__'
@@ -123,10 +146,12 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/leaderboard'
+    | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/profile'
     | '/_authenticated/quests'
+    | '/guides/what-are-soulbound-tokens'
     | '/api/public/tally-webhook'
   fileRoutesById: FileRoutesById
 }
@@ -135,6 +160,8 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   LeaderboardRoute: typeof LeaderboardRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  GuidesWhatAreSoulboundTokensRoute: typeof GuidesWhatAreSoulboundTokensRoute
   ApiPublicTallyWebhookRoute: typeof ApiPublicTallyWebhookRoute
 }
 
@@ -168,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -195,6 +229,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/quests'
       preLoaderRoute: typeof AuthenticatedQuestsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/guides/what-are-soulbound-tokens': {
+      id: '/guides/what-are-soulbound-tokens'
+      path: '/guides/what-are-soulbound-tokens'
+      fullPath: '/guides/what-are-soulbound-tokens'
+      preLoaderRoute: typeof GuidesWhatAreSoulboundTokensRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/tally-webhook': {
       id: '/api/public/tally-webhook'
@@ -228,6 +269,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   LeaderboardRoute: LeaderboardRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  GuidesWhatAreSoulboundTokensRoute: GuidesWhatAreSoulboundTokensRoute,
   ApiPublicTallyWebhookRoute: ApiPublicTallyWebhookRoute,
 }
 export const routeTree = rootRouteImport
