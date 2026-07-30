@@ -9,6 +9,12 @@
  * key string, so every call in this script would have thrown at runtime.
  * This version derives the account via privateKeyToAccount() as viem expects.
  *
+ * FIXED: the "already registered" check called a `badgeConfigs(uint256)`
+ * tuple getter that doesn't exist on-chain (the registry mapping in
+ * MiniHackAchievement.sol is private, with no auto-generated getter) — every
+ * run would have reverted on the very first badge. It now calls the actual
+ * exposed view, `isBadgeRegistered(uint256)`.
+ *
  * Usage:
  *   npm install viem dotenv
  *   npx tsx scripts/register_badges.ts
@@ -37,7 +43,7 @@ if (!CONTRACT_ADDRESS || !PRIVATE_KEY) {
 
 const abi = parseAbi([
   "function registerBadge(uint256 badgeId, string uri, bool isSoulbound) external",
-  "function badgeConfigs(uint256) view returns (string uri, bool isSoulbound, bool registered)",
+  "function isBadgeRegistered(uint256 badgeId) view returns (bool)",
 ]);
 
 interface BadgeEntry {
@@ -71,14 +77,14 @@ async function main(): Promise<void> {
   for (const [, badge] of Object.entries(badgeUris).sort(([a], [b]) => Number(a) - Number(b))) {
     const { badgeId, name, metadataUri, isSoulbound } = badge;
 
-    const config = await publicClient.readContract({
+    const alreadyRegistered = await publicClient.readContract({
       address: CONTRACT_ADDRESS as `0x${string}`,
       abi,
-      functionName: "badgeConfigs",
+      functionName: "isBadgeRegistered",
       args: [BigInt(badgeId)],
     });
 
-    if (config[2]) {
+    if (alreadyRegistered) {
       console.log(`[${String(badgeId).padStart(2, "0")}] Already registered — skipping: ${name}`);
       continue;
     }
