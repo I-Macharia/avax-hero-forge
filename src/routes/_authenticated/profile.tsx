@@ -124,8 +124,10 @@ function ProfilePage() {
                 toast.success("Copied");
               }}
               className="text-muted-foreground hover:text-foreground"
+              aria-label="Copy wallet address"
+              title="Copy wallet address"
             >
-              <Copy className="h-4 w-4" />
+              <Copy className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
         ) : (
