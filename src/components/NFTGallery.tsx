@@ -19,7 +19,9 @@ export default function NFTGallery({ owner, contractAddress }: Props) {
     queryFn: async () => {
       let q = supabase
         .from("nft_mints")
-        .select("id, token_id, metadata_uri, contract_address, owner_address, quest_id, quests(title, description)")
+        .select(
+          "id, token_id, metadata_uri, contract_address, owner_address, quest_id, quests(title, description, icon, cover_image_url)",
+        )
         .order("id", { ascending: false });
       if (owner) q = q.eq("owner_address", owner);
       if (contractAddress) q = q.eq("contract_address", contractAddress);
@@ -49,7 +51,8 @@ export default function NFTGallery({ owner, contractAddress }: Props) {
             key={n.id}
             title={quest?.title ?? `Badge #${n.token_id ?? n.id}`}
             subtitle={quest?.description ?? undefined}
-            icon="sparkles"
+            icon={quest?.icon ?? "sparkles"}
+            imageUrl={quest?.cover_image_url}
             earned
           />
         );
