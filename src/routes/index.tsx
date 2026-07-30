@@ -37,7 +37,7 @@ export const Route = createFileRoute("/")({
           ],
           organizer: { "@type": "Organization", name: "Avalanche Africa", url: HOME_URL },
           url: HOME_URL,
-೦        }),
+}),
       },
     ],
   }),
