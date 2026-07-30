@@ -11,7 +11,17 @@ import { resyncTallyQuest } from "@/lib/tally.functions";
 import { txUrl } from "@/lib/contract/config";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin · Avax Hero Forge" }] }),
+  head: () => ({
+    meta: [
+      { title: "Admin · Avax Hero Forge" },
+      {
+        name: "description",
+        content:
+          "Organizer tools for the MiniHack cohort: review Tally submissions, approve completions, and mint badges to participant wallets.",
+      },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: AdminPage,
 });
 

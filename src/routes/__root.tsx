@@ -76,6 +76,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify([
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Avax Hero Forge",
+            alternateName: "Team1 MiniHack Heroes",
+            url: "https://mini-hack-heroes.lovable.app/",
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Avalanche Africa",
+            alternateName: "Team1 Africa",
+            url: "https://mini-hack-heroes.lovable.app/",
+          },
+        ]),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,

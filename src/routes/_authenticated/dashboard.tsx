@@ -10,7 +10,17 @@ import { txUrl } from "@/lib/contract/config";
 import NFTGallery from "@/components/NFTGallery";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard · Avax Hero Forge" }] }),
+  head: () => ({
+    meta: [
+      { title: "Dashboard · Avax Hero Forge" },
+      {
+        name: "description",
+        content:
+          "Your MiniHack dashboard: track quest progress, points, attendance, and the soulbound badges minted to your Avalanche wallet.",
+      },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: Dashboard,
 });
 

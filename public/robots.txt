@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /admin
+Disallow: /quests
+
+Sitemap: https://mini-hack-heroes.lovable.app/sitemap.xml

@@ -5,8 +5,22 @@ import { Search, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BadgeCard } from "@/components/BadgeCard";
 
+const LB_URL = "https://mini-hack-heroes.lovable.app/leaderboard";
+const LB_TITLE = "MiniHack Leaderboard — Top Avalanche Builders";
+const LB_DESCRIPTION =
+  "Live ranking of Team1 Africa MiniHack builders by quest completions, points, and soulbound NFT badges earned on Avalanche.";
+
 export const Route = createFileRoute("/leaderboard")({
-  head: () => ({ meta: [{ title: "Leaderboard · Avax Hero Forge" }] }),
+  head: () => ({
+    meta: [
+      { title: LB_TITLE },
+      { name: "description", content: LB_DESCRIPTION },
+      { property: "og:title", content: LB_TITLE },
+      { property: "og:description", content: LB_DESCRIPTION },
+      { property: "og:url", content: LB_URL },
+    ],
+    links: [{ rel: "canonical", href: LB_URL }],
+  }),
   component: LeaderboardPage,
 });
 
