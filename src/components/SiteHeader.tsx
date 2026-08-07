@@ -6,7 +6,7 @@ import { useIsOrganizer } from "@/hooks/useRoles";
 
 const nav = [
   { to: "/", label: "Home" },
-  { to: "/dashboard", label: "Dashboard", auth: true },
+  { to: "/dashboard", label: "Dashboard" },
   { to: "/quests", label: "Quests", auth: true },
   { to: "/leaderboard", label: "Leaderboard" },
 ];

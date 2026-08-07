@@ -1,0 +1,142 @@
+{
+  "1": {
+    "badgeId": 1,
+    "name": "Week 1 S1: Deploy Your First Contract",
+    "imageUri": "ipfs://bafybeibxtg6mcyihql2hsulqb6vkq7ehqca6kenv5mo57outlsx5migpsm",
+    "metadataUri": "ipfs://QmYwGz6QNGY84HMnLJDofjhjSEjZPvYJvvHGstxbQVmtXZ",
+    "isSoulbound": true
+  },
+  "2": {
+    "badgeId": 2,
+    "name": "Week 1 S2: Register as a Builder",
+    "imageUri": "ipfs://bafybeieekivbjpgfhbtx2dzws5ldnct3vo3kxzrhtofy5ptxlnn5jf4x4y",
+    "metadataUri": "ipfs://QmdXnwg1TUpM3RFpB9k99keLS3r4z5TrsLr3hqpjjGis25",
+    "isSoulbound": true
+  },
+  "3": {
+    "badgeId": 3,
+    "name": "Week 2 S3: Build and Submit a Project",
+    "imageUri": "ipfs://bafybeiajhvslsoqhsoalnimcfhjiuot2fle56urkmwowrdm4vsiz244bce",
+    "metadataUri": "ipfs://QmT2CcpGQSbBB5vKvsUFaFBmM1Wmore2jtMR3x7CVj5Rco",
+    "isSoulbound": true
+  },
+  "4": {
+    "badgeId": 4,
+    "name": "Week 2 S4: Scaffold with Foundry",
+    "imageUri": "ipfs://bafybeibard5mu5pwlv3vrtg4wt2uihalroxzv3kvrwvleeb7ulcay4jsoa",
+    "metadataUri": "ipfs://QmP1rAzr2tzuWxriHvbn5dcY6y93MenCqf6PqHX5RcxMWR",
+    "isSoulbound": true
+  },
+  "5": {
+    "badgeId": 5,
+    "name": "Week 3 S5 Quest",
+    "imageUri": "ipfs://bafybeih2qbyv6xvc5gyuo6slvie27jq7jostbloyicsietdkjnkokgpg4i",
+    "metadataUri": "ipfs://QmUrwM1T95ADzckfcZuu7enxfs8psQDrZF27c2DtWnbpCQ",
+    "isSoulbound": true
+  },
+  "6": {
+    "badgeId": 6,
+    "name": "Week 3 S6 Quest",
+    "imageUri": "ipfs://bafybeibhp3nrcjz47pdzgyhmeqcgddqqwguq3q7qxigfqzwkc7h7gtwfda",
+    "metadataUri": "ipfs://QmXHmBZddLwh6aA5AMsq8fAmhK3nrjCt76s2YcDS5U7z48",
+    "isSoulbound": true
+  },
+  "7": {
+    "badgeId": 7,
+    "name": "Week 4: Advanced Subnet Configuration",
+    "imageUri": "ipfs://bafybeidnmeakt4vlwn23r7bukfhpav6x2wiewou7niqrg5qonplocbrdru",
+    "metadataUri": "ipfs://QmZ1qxAhnci17VmnaaXuRfx8hSmYS5ZfboRDQH8wr5363K",
+    "isSoulbound": true
+  },
+  "8": {
+    "badgeId": 8,
+    "name": "Week 5: Cross-Chain Communication",
+    "imageUri": "ipfs://bafybeicmiqs7ueq6qpa44627yhxra3tvkacsptmogohk2sl7ejohlmyomq",
+    "metadataUri": "ipfs://QmfBgAq1P3DJ2yAd5Yun2XCjmqawPRPWu8xWviyRxMKqHH",
+    "isSoulbound": true
+  },
+  "9": {
+    "badgeId": 9,
+    "name": "Gaming Week 5: Game Loop Design",
+    "imageUri": "ipfs://bafybeifnhlzyr3yay5lkz3pii5zaxq3eamxehi7yprizbhaeafgy64q3be",
+    "metadataUri": "ipfs://QmdLWvUnvJkUHYonzLHU7yRAzmwC9ZeDu1JoHeHBUky59R",
+    "isSoulbound": true
+  },
+  "10": {
+    "badgeId": 10,
+    "name": "Gaming Week 6: NFT Integration",
+    "imageUri": "ipfs://bafybeia2grj7qeorurnntmf34stzhnechvom6bk2t3jc4pff63n4qjmzae",
+    "metadataUri": "ipfs://QmWH7eXt2rwcVhucN858hjyUPvf8q8Gz1zMwVR5WR8b6bM",
+    "isSoulbound": true
+  },
+  "11": {
+    "badgeId": 11,
+    "name": "Gaming Week 7: Leaderboard Contract",
+    "imageUri": "ipfs://bafybeibkuz62rmu4i542r6mkss7ivnolymhhfxf44tdamz4que3rzmcvwa",
+    "metadataUri": "ipfs://QmS5QbjUXZL5aihVURrwex3esPdKYNEih6b8SbtZkDt2hr",
+    "isSoulbound": true
+  },
+  "12": {
+    "badgeId": 12,
+    "name": "Agentic AI Week 9: Agent Architecture",
+    "imageUri": "ipfs://bafybeihmcnm6olq4mt3to7y2qr6fkqdjtmqj6kvwxfmcbz4pxvvldsr7nm",
+    "metadataUri": "ipfs://QmWre4mGd53bSiqPkoVRbQ6d9dBw2TJkxkMUoD3Cte2DCh",
+    "isSoulbound": true
+  },
+  "13": {
+    "badgeId": 13,
+    "name": "Agentic AI Week 10: On-Chain AI Action",
+    "imageUri": "ipfs://bafybeiakna3jhan6i4vds5fisyi3nheoqitbbxat7z47hrd23yj34og6na",
+    "metadataUri": "ipfs://QmVSD3UQfEQ7HUhgPrjt53xUuJxaNRJDLzh4AX86cEqthK",
+    "isSoulbound": true
+  },
+  "14": {
+    "badgeId": 14,
+    "name": "Week 10: Decentralized Governance",
+    "imageUri": "ipfs://bafybeigjtppb3zbpifjkzj3rbaf2xld6odei7xj5mqevd5k2pnyrixu53i",
+    "metadataUri": "ipfs://QmatN2GWqMhzCbe7mkFUBvLUm24Qn3ubPTnMbyu4Qzf1Qw",
+    "isSoulbound": true
+  },
+  "15": {
+    "badgeId": 15,
+    "name": "Week 11: Production Mainnet Deployment",
+    "imageUri": "ipfs://bafybeicey5wuo2t7xdph6mjcundnzbg2rne7yms3qpevb4jv6hy5ggyzw4",
+    "metadataUri": "ipfs://QmZcfyzMReRLRY2UbHeQeaD3G67Pcx4CiWj6t7ryjGVLyJ",
+    "isSoulbound": true
+  },
+  "16": {
+    "badgeId": 16,
+    "name": "Agentic AI Week 12: Product Demo",
+    "imageUri": "ipfs://bafybeibibekjzgkxkqeq7dxfkqlsniwc63halnrimnlffjznffzm6i7awe",
+    "metadataUri": "ipfs://QmbtDAnGxRZBsDsw1JVafmzYtQJzQ3uVk7foa6PXWLmiZw",
+    "isSoulbound": true
+  },
+  "17": {
+    "badgeId": 17,
+    "name": "Final Capstone: Master of the Forge",
+    "imageUri": "ipfs://bafybeichkhhchsmmxfjigjv3fvtkq5f47xd6o4hwc5hqtqox3twpq44xt4",
+    "metadataUri": "ipfs://QmVzvFY1dehFw51LP4upDYkKBDqttnczCnuGu5kKVHPSbG",
+    "isSoulbound": true
+  },
+  "18": {
+    "badgeId": 18,
+    "name": "MiniHack Champion \u2014 1st Place",
+    "imageUri": "ipfs://bafybeib6usid5pmo6gid7cubjp7z2qeg6ezyyvf4silaqpvet7l4zidthm",
+    "metadataUri": "ipfs://Qmdy1Dis8b82GxKjxWBwwGPCntw2b3JZYnDXTbgj7o7Vqe",
+    "isSoulbound": false
+  },
+  "19": {
+    "badgeId": 19,
+    "name": "MiniHack Runner-Up \u2014 2nd Place",
+    "imageUri": "ipfs://bafybeiaqsjpaiwp2jj7tjao2y44grr6zvdwxndz2l646xp42dqbupgr35u",
+    "metadataUri": "ipfs://QmY6RLFBdBjMBHutUbP9DMve7TQYjPxz8GbHHEFSDi5PpZ",
+    "isSoulbound": false
+  },
+  "20": {
+    "badgeId": 20,
+    "name": "MiniHack Finalist \u2014 3rd Place",
+    "imageUri": "ipfs://bafybeic3l6kptetae6fxe6relh7qfzwv54qmpqnu6vczkd3khhoxia3iaa",
+    "metadataUri": "ipfs://QmVW38UCatoPhRjsDUSXPajyemG9B2MzjNUQ2hao1pyjxM",
+    "isSoulbound": false
+  }
+}

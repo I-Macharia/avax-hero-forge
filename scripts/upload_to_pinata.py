@@ -25,12 +25,40 @@ import json
 import time
 import requests
 from pathlib import Path
-import dotenv
 
-dotenv.load_dotenv()
 
-PINATA_JWT = os.environ["PINATA_JWT"]
-BADGES_DIR = Path("stitch_avax_hero_quest_design")
+def load_environment() -> None:
+    env_path = Path(__file__).resolve().parents[1] / ".env"
+    if not env_path.exists():
+        return
+
+    for raw_line in env_path.read_text().splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+        if line.startswith("export "):
+            line = line[7:].strip()
+
+        if "=" in line:
+            key, value = line.split("=", 1)
+        elif ":" in line:
+            key, value = line.split(":", 1)
+        else:
+            continue
+
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        os.environ.setdefault(key, value)
+
+
+load_environment()
+
+PINATA_JWT = os.getenv("PINATA_JWT")
+if not PINATA_JWT:
+    raise RuntimeError("Missing PINATA_JWT. Export it in your shell or put it in .env.")
+
+BADGES_DIR = Path("public/badges")
 
 PINATA_FILE_URL = "https://uploads.pinata.cloud/v3/files"
 PINATA_JSON_URL = "https://api.pinata.cloud/pinning/pinJSONToIPFS"
@@ -64,38 +92,56 @@ BADGE_REGISTRY: dict[int, tuple[str, str, str, bool]] = {
     9: ("a_high_fidelity_nft_collectible_for_gaming_week_5_game_loop_design._a_glowing",
         "Gaming Week 5: Game Loop Design", "Awarded for designing an on-chain game loop.", True),
     10: ("a_high_fidelity_nft_collectible_for_gaming_week_6_nft_integration._a",
-         "Gaming Week 6: NFT Integration", "Awarded for integrating NFTs into a game.", True),
+            "Gaming Week 6: NFT Integration", "Awarded for integrating NFTs into a game.", True),
     11: ("a_high_fidelity_nft_collectible_for_gaming_week_7_leaderboard_contract._a",
-         "Gaming Week 7: Leaderboard Contract",
-         "Awarded for building and deploying an on-chain leaderboard contract.", True),
+        "Gaming Week 7: Leaderboard Contract", "Awarded for building and deploying an on-chain leaderboard contract.", True),
     12: ("a_high_fidelity_nft_collectible_for_agentic_ai_week_9_agent_architecture._a",
-         "Agentic AI Week 9: Agent Architecture",
-         "Awarded for designing a robust agentic AI architecture.", True),
+        "Agentic AI Week 9: Agent Architecture", "Awarded for designing a robust agentic AI architecture.", True),
     13: ("a_high_fidelity_nft_collectible_for_agentic_ai_week_10_on_chain_ai_action._a",
-         "Agentic AI Week 10: On-Chain AI Action",
-         "Awarded for executing an on-chain AI action successfully.", True),
+        "Agentic AI Week 10: On-Chain AI Action", "Awarded for executing an on-chain AI action successfully.", True),
     14: ("a_high_fidelity_nft_collectible_for_week_10_decentralized_governance._a",
-         "Week 10: Decentralized Governance",
-         "Awarded for implementing a decentralized governance mechanism.", True),
+        "Week 10: Decentralized Governance", "Awarded for implementing a decentralized governance mechanism.", True),
     15: ("a_high_fidelity_nft_collectible_for_week_11_production_mainnet_deployment._a",
-         "Week 11: Production Mainnet Deployment",
-         "Awarded for deploying a project to Avalanche mainnet.", True),
+        "Week 11: Production Mainnet Deployment", "Awarded for deploying a project to Avalanche mainnet.", True),
     16: ("a_high_fidelity_nft_collectible_for_agentic_ai_week_12_agentic_product_demo._a",
-         "Agentic AI Week 12: Product Demo", "Awarded for delivering an agentic AI product demo.", True),
+        "Agentic AI Week 12: Product Demo", "Awarded for delivering an agentic AI product demo.", True),
     17: ("a_high_fidelity_nft_collectible_for_final_capstone_project_master_of_the_forge.",
-         "Final Capstone: Master of the Forge",
-         "Awarded for completing the final MiniHack capstone project.", True),
+        "Final Capstone: Master of the Forge", "Awarded for completing the final MiniHack capstone project.", True),
     # Leaderboard badges — transferable, one-of-a-kind, awarded (not self-claimed)
     18: ("a_high_fidelity_nft_collectible_for_mini_hack_leaderboard_first_place_champion.",
-         "MiniHack Champion — 1st Place",
-         "Awarded to the first-place winner of the Avalanche MiniHack leaderboard.", False),
+        "MiniHack Champion — 1st Place", "Awarded to the first-place winner of the Avalanche MiniHack leaderboard.", False),
     19: ("a_high_fidelity_nft_collectible_for_mini_hack_leaderboard_second_place_runner",
-         "MiniHack Runner-Up — 2nd Place",
-         "Awarded to the second-place finisher of the Avalanche MiniHack leaderboard.", False),
+        "MiniHack Runner-Up — 2nd Place", "Awarded to the second-place finisher of the Avalanche MiniHack leaderboard.", False),
     20: ("a_high_fidelity_nft_collectible_for_mini_hack_leaderboard_third_place_finisher.",
-         "MiniHack Finalist — 3rd Place",
-         "Awarded to the third-place finisher of the Avalanche MiniHack leaderboard.", False),
+        "MiniHack Finalist — 3rd Place", "Awarded to the third-place finisher of the Avalanche MiniHack leaderboard.", False),
 }
+
+
+def resolve_image_path(badge_id: int, folder_name: str, badges_dir: Path | None = None) -> Path:
+    badges_dir = badges_dir or BADGES_DIR
+
+    folder_path = badges_dir / folder_name
+    if (folder_path / "screen.png").exists():
+        return folder_path / "screen.png"
+
+    flat_match = sorted(badges_dir.glob(f"badge-{badge_id:02d}*.png"))
+    if flat_match:
+        return flat_match[0]
+
+    for path in sorted(badges_dir.glob("*.png")):
+        stem = path.stem.lower()
+        if stem.startswith(f"badge-{badge_id:02d}"):
+            return path
+        if folder_name.lower().replace("_", "-") in stem:
+            return path
+
+    for path in badges_dir.rglob("*.png"):
+        if path.name.lower() == "screen.png":
+            return path
+
+    raise FileNotFoundError(
+        f"Could not find a badge image for badgeId {badge_id} in {badges_dir}."
+    )
 
 
 def pin_file(image_path: Path, badge_name: str) -> str:
@@ -128,14 +174,16 @@ def pin_metadata(metadata: dict, badge_name: str) -> str:
 
 def main() -> None:
     if not BADGES_DIR.exists():
-        raise FileNotFoundError(f"{BADGES_DIR} not found. Unzip the artifact bundle first.")
+        raise FileNotFoundError(
+            f"{BADGES_DIR} not found. Unzip the artifact bundle first.")
 
     output: dict[str, dict] = {}
 
     for badge_id, (folder, name, description, is_soulbound) in sorted(BADGE_REGISTRY.items()):
-        image_path = BADGES_DIR / folder / "screen.png"
-        if not image_path.exists():
-            print(f"[WARN] Missing image for badgeId {badge_id}: {image_path}")
+        try:
+            image_path = resolve_image_path(badge_id, folder)
+        except FileNotFoundError as exc:
+            print(f"[WARN] {exc}")
             continue
 
         print(f"\n[{badge_id:02d}] {name}")
@@ -147,7 +195,8 @@ def main() -> None:
             "image": image_uri,
             "attributes": [
                 {"trait_type": "Badge ID", "value": badge_id},
-                {"trait_type": "Type", "value": "Quest" if is_soulbound else "Leaderboard"},
+                {"trait_type": "Type",
+                    "value": "Quest" if is_soulbound else "Leaderboard"},
                 {"trait_type": "Soulbound", "value": is_soulbound},
                 {"trait_type": "Collection", "value": "Avalanche MiniHack"},
             ],

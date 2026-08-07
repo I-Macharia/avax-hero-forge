@@ -4,38 +4,68 @@
  * Reads badge_uris.json (output of upload_to_pinata.py) and calls
  * registerBadge() on the deployed MiniHackAchievement contract for each entry.
  *
- * FIXED: the previous version passed `account: PRIVATE_KEY as any` directly
- * to createWalletClient — viem requires an Account object, not a raw private
- * key string, so every call in this script would have thrown at runtime.
- * This version derives the account via privateKeyToAccount() as viem expects.
- *
- * FIXED: the "already registered" check called a `badgeConfigs(uint256)`
- * tuple getter that doesn't exist on-chain (the registry mapping in
- * MiniHackAchievement.sol is private, with no auto-generated getter) — every
- * run would have reverted on the very first badge. It now calls the actual
- * exposed view, `isBadgeRegistered(uint256)`.
- *
  * Usage:
- *   npm install viem dotenv
  *   npx tsx scripts/register_badges.ts
  *
  * Required .env:
  *   PRIVATE_KEY=0x...            Admin wallet (holds DEFAULT_ADMIN_ROLE)
  *   VITE_CONTRACT_ADDRESS=0x...  Deployed MiniHackAchievement address
  */
+/// <reference types="node" />
 import { createPublicClient, createWalletClient, http, parseAbi } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { avalancheFuji } from "viem/chains";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
+import { resolve } from "path";
 
-if (typeof process !== "undefined" && process.env) {
-  // Load .env in Node.js environment
-  const dotenv = require("dotenv");
-  dotenv.config();
+function loadEnvFile(): void {
+  const envPath = resolve(process.cwd(), ".env");
+  if (!existsSync(envPath)) {
+    return;
+  }
+
+  for (const rawLine of readFileSync(envPath, "utf-8").split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+
+    let normalizedLine = line;
+    if (normalizedLine.startsWith("export ")) {
+      normalizedLine = normalizedLine.slice(7).trim();
+    }
+
+    let key = "";
+    let value = "";
+    const equalsIndex = normalizedLine.indexOf("=");
+    if (equalsIndex >= 0) {
+      key = normalizedLine.slice(0, equalsIndex);
+      value = normalizedLine.slice(equalsIndex + 1);
+    } else {
+      const colonIndex = normalizedLine.indexOf(":");
+      if (colonIndex < 0) {
+        continue;
+      }
+      key = normalizedLine.slice(0, colonIndex);
+      value = normalizedLine.slice(colonIndex + 1);
+    }
+
+    key = key.trim();
+    value = value.trim().replace(/^['\"]|['\"]$/g, "");
+    if (!key) {
+      continue;
+    }
+
+    if (!process.env[key]) {
+      process.env[key] = value;
+    }
+  }
 }
 
-const CONTRACT_ADDRESS = process.env.VITE_CONTRACT_ADDRESS as `0x${string}` | undefined;
-const PRIVATE_KEY = process.env.PRIVATE_KEY as `0x${string}` | undefined;
+loadEnvFile();
+
+const CONTRACT_ADDRESS = (process.env.VITE_CONTRACT_ADDRESS || process.env.CONTRACT_ADDRESS) as `0x${string}` | undefined;
+const PRIVATE_KEY = (process.env.PRIVATE_KEY || process.env.DEPLOYER_PRIVATE_KEY) as `0x${string}` | undefined;
 
 if (!CONTRACT_ADDRESS || !PRIVATE_KEY) {
   throw new Error("Missing VITE_CONTRACT_ADDRESS or PRIVATE_KEY in .env");
@@ -95,12 +125,13 @@ async function main(): Promise<void> {
       abi,
       functionName: "registerBadge",
       args: [BigInt(badgeId), metadataUri, isSoulbound],
+      gas: 500_000n,
     });
     await publicClient.waitForTransactionReceipt({ hash });
-    console.log(`\u2713 tx: ${hash}`);
+    console.log(`✓ tx: ${hash}`);
   }
 
-  console.log("\n\u2705 All badges registered!");
+  console.log("\n✅ All badges registered!");
 }
 
 main().catch((err) => {

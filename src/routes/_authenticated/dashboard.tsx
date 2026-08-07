@@ -1,145 +1,107 @@
 import React from "react";
-import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { Trophy, Target, Sparkles, Calendar } from "lucide-react";
+import { Trophy, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/hooks/useSession";
 import { BadgeCard } from "@/components/BadgeCard";
-import { txUrl } from "@/lib/contract/config";
 import NFTGallery from "@/components/NFTGallery";
 
-export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({
-    meta: [
-      { title: "Dashboard · Avax Hero Forge" },
-      {
-        name: "description",
-        content:
-          "Your MiniHack dashboard: track quest progress, points, attendance, and the soulbound badges minted to your Avalanche wallet.",
-      },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: Dashboard,
-});
-
-function Dashboard() {
-  const { user } = useSession();
-
-  const { data } = useQuery({
-    queryKey: ["dashboard", user?.id],
-    enabled: !!user,
+export function DashboardContent() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["public-dashboard"],
     queryFn: async () => {
-      if (!user) return null;
-      const [profile, attendance, sessions, quests, completions, mints] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", user.id).single(),
-        supabase.from("attendance").select("*, sessions(*)").eq("user_id", user.id),
-        supabase.from("sessions").select("id"),
-        supabase.from("quests").select("*").eq("active", true),
-        supabase.from("quest_completions").select("*").eq("user_id", user.id),
-        supabase
-          .from("nft_mints")
-          .select("*, quests(title, icon, cover_image_url)")
-          .eq("user_id", user.id)
-          .order("minted_at", { ascending: false }),
+      const [questsRes, mintsRes] = await Promise.all([
+        supabase.from("quests").select("*").eq("active", true).order("week").order("points"),
+        supabase.from("nft_mints").select("quest_id").order("minted_at", { ascending: false }),
       ]);
+
+      const quests = questsRes.data ?? [];
+      const mints = mintsRes.data ?? [];
+      const mintedByQuest = new Map<number, number>();
+
+      mints.forEach((mint: any) => {
+        if (typeof mint.quest_id === "number") {
+          mintedByQuest.set(mint.quest_id, (mintedByQuest.get(mint.quest_id) ?? 0) + 1);
+        }
+      });
+
       return {
-        profile: profile.data,
-        attendance: attendance.data ?? [],
-        totalSessions: sessions.data?.length ?? 0,
-        quests: quests.data ?? [],
-        completions: completions.data ?? [],
-        mints: mints.data ?? [],
+        quests,
+        mints,
+        mintedByQuest,
       };
     },
   });
 
-  if (!data) return <div className="p-8 text-center text-muted-foreground">Loading…</div>;
+  if (isLoading || !data) return <div className="p-8 text-center text-muted-foreground">Loading…</div>;
 
-  const attendancePct = data.totalSessions
-    ? Math.round((data.attendance.length / data.totalSessions) * 100)
-    : 0;
-  const questPct = data.quests.length
-    ? Math.round((data.completions.length / data.quests.length) * 100)
-    : 0;
-  const attendancePoints = data.attendance.reduce(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (n, a: any) => n + (a.sessions?.points ?? 10),
-    0,
-  );
-  const questPoints = data.completions.reduce((n, c) => {
-    const q = data.quests.find((x) => x.id === c.quest_id);
-    return n + (q?.points ?? 0);
-  }, 0);
-  const totalPoints = attendancePoints + questPoints;
+  const totalMinted = data.mints.length;
+  const registeredCount = data.quests.length;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 space-y-8">
       <div>
-        <p className="text-sm text-muted-foreground">Welcome back,</p>
-        <h1 className="text-3xl font-bold">{data.profile?.display_name ?? "Hero"} 👋</h1>
+        <p className="text-sm text-muted-foreground">Public view</p>
+        <h1 className="text-3xl font-bold">MiniHack trophy room 👁️</h1>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <ProgressCard
-          icon={<Calendar />}
-          label="Attendance"
-          value={`${data.attendance.length}/${data.totalSessions}`}
-          pct={attendancePct}
-        />
-        <ProgressCard
-          icon={<Target />}
-          label="Quests"
-          value={`${data.completions.length}/${data.quests.length}`}
-          pct={questPct}
-        />
+      <div className="grid gap-4 md:grid-cols-2">
         <ProgressCard
           icon={<Trophy />}
-          label="Total points"
-          value={totalPoints.toLocaleString()}
-          pct={Math.min(100, totalPoints / 5)}
+          label="Registered badges"
+          value={registeredCount.toString()}
+          pct={100}
+        />
+        <ProgressCard
+          icon={<Sparkles />}
+          label="Badges minted"
+          value={totalMinted.toString()}
+          pct={registeredCount ? Math.min(100, Math.round((totalMinted / registeredCount) * 100)) : 0}
         />
       </div>
 
-  <section>
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
-          Your NFT badges
-        </h2>
-        {data.mints.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">
-            No badges yet — complete a quest and claim your first one.
+      <section className="space-y-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              Trophy room
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Every registered quest badge in the MiniHack collection. Earned trophies glow while locked ones stay dim.
+            </p>
           </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {data.mints.map((m) => (
-              <motion.a
-                key={m.id}
-                href={txUrl(m.tx_hash)}
-                target="_blank"
-                rel="noreferrer"
-                whileHover={{ y: -4 }}
-                className="block"
-              >
+          <div className="rounded-full border border-border px-3 py-1 text-sm text-muted-foreground">
+            Registered {data.quests.length}
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {data.quests.map((quest: any) => {
+            const mintedCount = data.mintedByQuest.get(quest.id) ?? 0;
+            const earned = mintedCount > 0;
+
+            return (
+              <div key={quest.id} className="relative">
                 <BadgeCard
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  title={(m as any).quests?.title ?? `Badge #${m.token_id}`}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  icon={(m as any).quests?.icon ?? "sparkles"}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  imageUrl={(m as any).quests?.cover_image_url}
-                  subtitle={`Token #${m.token_id ?? "?"}`}
-                  earned
+                  title={quest.title}
+                  subtitle={quest.description ?? "Quest badge"}
+                  icon={quest.icon ?? "sparkles"}
+                  imageUrl={quest.cover_image_url}
+                  earned={earned}
+                  claimState={earned ? "claimed" : "locked"}
                 />
-              </motion.a>
-            ))}
-          </div>
-        )}
-        {/* Thirdweb-powered gallery (additional on-chain view) */}
-        <div className="mt-6">
-          <h3 className="text-sm font-medium mb-3">On-chain view</h3>
-          {/* import dynamically to avoid SSR issues */}
+                {mintedCount > 0 && (
+                  <div className="absolute left-3 top-3 rounded-full bg-primary/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                    Minted {mintedCount}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-border/60 bg-card/40 p-4">
+          <h3 className="mb-3 text-sm font-medium">On-chain view</h3>
           <React.Suspense fallback={<div className="text-muted-foreground">Loading gallery…</div>}>
             <NFTGallery />
           </React.Suspense>

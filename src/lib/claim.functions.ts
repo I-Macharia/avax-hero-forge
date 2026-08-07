@@ -25,7 +25,7 @@ const claimInput = z.object({
 
 export const claimBadge = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => claimInput.parse(data))
+  .validator((data: unknown) => claimInput.parse(data))
   .handler(async ({ data, context }) => {
     const { userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
