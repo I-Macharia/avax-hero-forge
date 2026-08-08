@@ -4,6 +4,99 @@ import { Trophy, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BadgeCard } from "@/components/BadgeCard";
 import NFTGallery from "@/components/NFTGallery";
+import { publicClient } from "@/lib/contract/client";
+import { miniHackAbi } from "@/lib/contract/abi";
+import { CONTRACT_ADDRESS } from "@/lib/contract/config";
+
+type BadgePreview = {
+  registered: boolean;
+  name: string | null;
+  description: string | null;
+  imageUrl: string | null;
+  soulbound: boolean | null;
+};
+
+async function fetchBadgeMetadata(uri?: string | null) {
+  if (!uri) return null;
+  try {
+    const url = uri.startsWith("ipfs://") ? `https://ipfs.io/ipfs/${uri.slice("ipfs://".length)}` : uri;
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const payload = await response.json();
+    return {
+      name: typeof payload?.name === "string" ? payload.name : null,
+      description: typeof payload?.description === "string" ? payload.description : null,
+      image: typeof payload?.image === "string" ? payload.image : null,
+    } as { name: string | null; description: string | null; image: string | null };
+  } catch {
+    return null;
+  }
+}
+
+async function resolveBadgePreview(quest: any): Promise<BadgePreview> {
+  if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === "0x0000000000000000000000000000000000000000") {
+    return {
+      registered: false,
+      name: "Badge registration pending",
+      description: "The contract is not deployed yet, so the badge preview is unavailable.",
+      imageUrl: quest.cover_image_url ?? null,
+      soulbound: null,
+    };
+  }
+
+  if (typeof quest.badge_token_id !== "number") {
+    return {
+      registered: false,
+      name: "Badge registration pending",
+      description: "This quest is live, but no on-chain badge has been configured yet.",
+      imageUrl: quest.cover_image_url ?? null,
+      soulbound: null,
+    };
+  }
+
+  try {
+    const registered = await publicClient.readContract({
+      address: CONTRACT_ADDRESS as `0x${string}`,
+      abi: miniHackAbi,
+      functionName: "isBadgeRegistered",
+      args: [BigInt(quest.badge_token_id)],
+    });
+
+    if (!registered) {
+      return {
+        registered: false,
+        name: "Badge registration pending",
+        description: "This badge has not been registered on-chain yet, so the reward preview is still being prepared.",
+        imageUrl: quest.cover_image_url ?? null,
+        soulbound: null,
+      };
+    }
+
+    const [uri, isSoulbound] = (await publicClient.readContract({
+      address: CONTRACT_ADDRESS as `0x${string}`,
+      abi: miniHackAbi,
+      functionName: "getBadgeConfig",
+      args: [BigInt(quest.badge_token_id)],
+    })) as [string, boolean];
+
+    const metadata = await fetchBadgeMetadata(uri);
+    return {
+      registered: true,
+      name: metadata?.name ?? `Badge #${quest.badge_token_id}`,
+      description: metadata?.description ?? "Registered on-chain reward for this quest.",
+      imageUrl: metadata?.image ?? quest.cover_image_url ?? null,
+      soulbound: isSoulbound,
+    };
+  } catch {
+    return {
+      registered: false,
+      name: "Badge registration pending",
+      description: "The badge registry could not be read right now, so the preview is unavailable.",
+      imageUrl: quest.cover_image_url ?? null,
+      soulbound: null,
+    };
+  }
+}
 
 export function DashboardContent() {
   const { data, isLoading } = useQuery({
@@ -17,6 +110,7 @@ export function DashboardContent() {
       const quests = questsRes.data ?? [];
       const mints = mintsRes.data ?? [];
       const mintedByQuest = new Map<number, number>();
+      const badgePreviews = await Promise.all(quests.map((quest: any) => resolveBadgePreview(quest)));
 
       mints.forEach((mint: any) => {
         if (typeof mint.quest_id === "number") {
@@ -28,6 +122,7 @@ export function DashboardContent() {
         quests,
         mints,
         mintedByQuest,
+        badgePreviews,
       };
     },
   });
@@ -35,7 +130,7 @@ export function DashboardContent() {
   if (isLoading || !data) return <div className="p-8 text-center text-muted-foreground">Loading…</div>;
 
   const totalMinted = data.mints.length;
-  const registeredCount = data.quests.length;
+  const registeredCount = data.badgePreviews.filter((preview: BadgePreview) => preview.registered).length;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 space-y-8">
@@ -71,14 +166,21 @@ export function DashboardContent() {
             </p>
           </div>
           <div className="rounded-full border border-border px-3 py-1 text-sm text-muted-foreground">
-            Registered {data.quests.length}
+            Registered {registeredCount}
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.quests.map((quest: any) => {
+          {data.quests.map((quest: any, index: number) => {
             const mintedCount = data.mintedByQuest.get(quest.id) ?? 0;
             const earned = mintedCount > 0;
+            const preview = data.badgePreviews[index] ?? {
+              registered: false,
+              name: "Badge registration pending",
+              description: "The reward preview is still being prepared.",
+              imageUrl: quest.cover_image_url ?? null,
+              soulbound: null,
+            };
 
             return (
               <div key={quest.id} className="relative">
@@ -86,9 +188,13 @@ export function DashboardContent() {
                   title={quest.title}
                   subtitle={quest.description ?? "Quest badge"}
                   icon={quest.icon ?? "sparkles"}
-                  imageUrl={quest.cover_image_url}
+                  imageUrl={preview.imageUrl ?? quest.cover_image_url}
                   earned={earned}
                   claimState={earned ? "claimed" : "locked"}
+                  rewardName={preview.name}
+                  rewardDescription={preview.description}
+                  rewardStatus={preview.registered ? "registered" : "pending"}
+                  rewardType={preview.soulbound === true ? "soulbound" : preview.soulbound === false ? "transferable" : null}
                 />
                 {mintedCount > 0 && (
                   <div className="absolute left-3 top-3 rounded-full bg-primary/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary">

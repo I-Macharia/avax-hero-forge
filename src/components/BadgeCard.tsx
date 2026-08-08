@@ -36,6 +36,10 @@ export function BadgeCard({
   imageUrl,
   claimState = "none",
   onClaim,
+  rewardName,
+  rewardDescription,
+  rewardStatus,
+  rewardType,
 }: {
   title: string;
   subtitle?: string;
@@ -47,6 +51,10 @@ export function BadgeCard({
   /** Drives the optional claim button rendered at the bottom of the card. */
   claimState?: ClaimState;
   onClaim?: () => void;
+  rewardName?: string;
+  rewardDescription?: string;
+  rewardStatus?: "registered" | "pending";
+  rewardType?: "soulbound" | "transferable" | null;
 }) {
   const Icon = ICONS[icon] ?? Sparkles;
   const artwork = resolveArtworkUrl(imageUrl);
@@ -85,6 +93,29 @@ export function BadgeCard({
       <div className="p-5">
         <h3 className="font-semibold">{title}</h3>
         {subtitle && <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>}
+        {rewardName && (
+          <div className="mt-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-primary/80">Reward preview</p>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                  rewardStatus === "registered"
+                    ? "bg-success/15 text-success"
+                    : "bg-muted/60 text-muted-foreground"
+                }`}
+              >
+                {rewardStatus === "registered" ? "Registered" : "Pending registration"}
+              </span>
+            </div>
+            <p className="mt-1 text-sm font-semibold">{rewardName}</p>
+            {rewardDescription && <p className="mt-1 text-xs text-muted-foreground">{rewardDescription}</p>}
+            {rewardType && (
+              <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                {rewardType === "soulbound" ? "Soulbound badge" : "Transferable badge"}
+              </p>
+            )}
+          </div>
+        )}
         {typeof progress === "number" && (
           <div className="mt-3 h-1.5 rounded-full bg-muted overflow-hidden">
             <div

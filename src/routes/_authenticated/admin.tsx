@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Shield, Send, RefreshCw, Coins, ArrowRightLeft, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { listAdminUsers } from "@/lib/admin.functions";
-import { adminMintBadge, adminTransferBadge } from "@/lib/admin-mint.functions";
+import { adminMintBadge, adminTransferBadge, registerBadgeOnChain } from "@/lib/admin-mint.functions";
 import { resyncTallyQuest } from "@/lib/tally.functions";
 import { txUrl } from "@/lib/contract/config";
 
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "mint" | "submissions" | "transfer";
+type Tab = "mint" | "submissions" | "transfer" | "register";
 
 function AdminPage() {
   const qc = useQueryClient();
@@ -34,6 +34,7 @@ function AdminPage() {
   const fetchAdminUsers = useServerFn(listAdminUsers);
   const callMint = useServerFn(adminMintBadge);
   const callTransfer = useServerFn(adminTransferBadge);
+  const callRegister = useServerFn(registerBadgeOnChain);
   const callResync = useServerFn(resyncTallyQuest);
 
   const { data: quests } = useQuery({
@@ -73,6 +74,7 @@ function AdminPage() {
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [transferMintId, setTransferMintId] = useState("");
   const [transferTo, setTransferTo] = useState("");
+  const [registerSoulbound, setRegisterSoulbound] = useState(true);
 
   const mintMutation = useMutation({
     mutationFn: async () => {
@@ -89,6 +91,21 @@ function AdminPage() {
       qc.invalidateQueries();
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Mint failed"),
+  });
+
+  const registerMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedQuest) throw new Error("Pick a quest");
+      return callRegister({ data: { questId: selectedQuest, isSoulbound: registerSoulbound } });
+    },
+    onSuccess: (res) => {
+      toast.success(res.alreadyRegistered ? "Badge already registered" : "Badge registered", {
+        description: `${res.badgeId} → ${res.uri}`,
+      });
+      qc.invalidateQueries({ queryKey: ["public-dashboard"] });
+      qc.invalidateQueries({ queryKey: ["admin-quests"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Registration failed"),
   });
 
   const transferMutation = useMutation({
@@ -128,6 +145,7 @@ function AdminPage() {
       <div className="inline-flex rounded-full border border-border bg-card/60 p-1">
         {([
           { k: "mint" as const, l: "Mint badges", icon: Coins },
+          { k: "register" as const, l: "Register badges", icon: Shield },
           { k: "submissions" as const, l: "Tally submissions", icon: Send },
           { k: "transfer" as const, l: "Transfer", icon: ArrowRightLeft },
         ]).map(({ k, l, icon: Icon }) => (
@@ -221,6 +239,61 @@ function AdminPage() {
               })}
             </div>
           </div>
+        </section>
+      )}
+
+      {tab === "register" && (
+        <section className="rounded-2xl border border-border bg-card/70 p-5 space-y-4">
+          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+            <select
+              value={selectedQuest}
+              onChange={(e) => setSelectedQuest(e.target.value)}
+              className="rounded-lg bg-input/50 border border-border px-3 py-2"
+            >
+              <option value="">— pick a quest to register —</option>
+              {quests?.map((q) => (
+                <option key={q.id} value={q.id}>
+                  Week {q.week} · {q.track} · {q.title}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() => registerMutation.mutate()}
+              disabled={registerMutation.isPending || !selectedQuest}
+              className="rounded-lg bg-gradient-to-r from-primary to-accent px-5 py-2 text-sm font-semibold text-white disabled:opacity-40"
+            >
+              {registerMutation.isPending ? "Registering…" : "Register badge"}
+            </button>
+          </div>
+
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={registerSoulbound}
+              onChange={(e) => setRegisterSoulbound(e.target.checked)}
+              className="h-4 w-4 accent-primary"
+            />
+            Register as soulbound badge
+          </label>
+
+          {selectedQuest && (
+            <div className="rounded-xl border border-border bg-background/40 p-4 text-sm space-y-2">
+              {(() => {
+                const quest = quests?.find((q) => q.id === selectedQuest);
+                return (
+                  <>
+                    <p className="font-medium">{quest?.title ?? "Selected quest"}</p>
+                    <p className="text-muted-foreground">
+                      Badge ID: {quest?.badge_token_id ?? "not configured"}
+                    </p>
+                    <p className="text-muted-foreground break-all">
+                      Metadata URI: {quest?.metadata_uri ?? "not configured"}
+                    </p>
+                  </>
+                );
+              })()}
+            </div>
+          )}
         </section>
       )}
 

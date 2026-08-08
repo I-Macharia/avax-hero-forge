@@ -22,6 +22,75 @@ const mintInput = z.object({
   userIds: z.array(z.string().uuid()).min(1).max(100),
 });
 
+const registerBadgeInput = z.object({
+  questId: z.string().uuid(),
+  isSoulbound: z.boolean().optional().default(true),
+});
+
+export const registerBadgeOnChain = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => registerBadgeInput.parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await assertOrganizer(supabase, userId);
+
+    const { getAdminMinter, getServerPublicClient, getContractAddress } = await import(
+      "@/lib/mint.server"
+    );
+    const contract = getContractAddress();
+    const { account, wallet } = getAdminMinter();
+    const publicClient = getServerPublicClient();
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: quest, error: qErr } = await supabaseAdmin
+      .from("quests")
+      .select("id, badge_token_id, metadata_uri, title")
+      .eq("id", data.questId)
+      .maybeSingle();
+    if (qErr || !quest) throw new Error("Quest not found");
+    if (quest.badge_token_id == null) throw new Error("Quest has no badge configured");
+    if (!quest.metadata_uri) throw new Error("Quest has no metadata URI configured");
+
+    const badgeId = BigInt(quest.badge_token_id);
+    const alreadyRegistered = await publicClient.readContract({
+      address: contract,
+      abi: miniHackAbi,
+      functionName: "isBadgeRegistered",
+      args: [badgeId],
+    });
+
+    if (alreadyRegistered) {
+      return {
+        ok: true as const,
+        alreadyRegistered: true as const,
+        hash: null,
+        badgeId: Number(badgeId),
+        uri: quest.metadata_uri,
+        isSoulbound: data.isSoulbound,
+      };
+    }
+
+    const { request } = await publicClient.simulateContract({
+      account,
+      address: contract,
+      abi: miniHackAbi,
+      functionName: "registerBadge",
+      args: [badgeId, quest.metadata_uri, data.isSoulbound],
+    });
+    const hash = await wallet.writeContract(request);
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    if (receipt.status !== "success") throw new Error("Badge registration reverted");
+
+    return {
+      ok: true as const,
+      alreadyRegistered: false as const,
+      hash,
+      badgeId: Number(badgeId),
+      uri: quest.metadata_uri,
+      isSoulbound: data.isSoulbound,
+    };
+  });
+
 export const adminMintBadge = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => mintInput.parse(data))
